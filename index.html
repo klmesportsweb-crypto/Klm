@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kerala Esports</title>
-<meta name="description" content="Kerala Esports tournaments. Follow @kl_masters_esports on Instagram.">
+<title>KLM Esports</title>
+<meta name="description" content="KLM Esports tournaments. Follow @kl_masters_esports on Instagram.">
 <link rel="icon" href="logo.jpg">
 <style>
 :root{
@@ -20,14 +20,18 @@ a{color:inherit}
 .wrap{max-width:960px;margin:0 auto;padding:0 20px}
 
 header{border-bottom:1px solid var(--line)}
-header .wrap{display:flex;justify-content:space-between;align-items:center;height:60px}
+header .wrap{max-width:none;display:flex;justify-content:space-between;align-items:center;gap:16px;height:60px;padding:0 20px}
 .brand{font:900 1.25rem/1 "Arial Black",Impact,sans-serif;letter-spacing:.04em;text-decoration:none}
 .brand span{color:var(--gold)}
-nav a{margin-left:20px;color:var(--muted);text-decoration:none;font-weight:600}
+nav{display:flex;align-items:center;gap:20px;margin-left:auto}
+nav a{color:var(--muted);text-decoration:none;font-weight:600}
 nav a:hover{color:var(--gold-soft)}
 
 .hero{padding:32px 0 48px;text-align:center}
-.hero video{width:min(100%,420px);aspect-ratio:1;border-radius:6px;background:#000;display:block;margin:0 auto}
+.logo-stage{position:relative;width:min(100%,420px);aspect-ratio:1;margin:0 auto;border-radius:6px;overflow:hidden;background:#0c0a07}
+.logo-stage img,.logo-stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.logo-stage video{opacity:0;transition:opacity .5s}
+.logo-stage.playing video{opacity:1}
 .hero h1{margin-top:24px;font:900 clamp(2rem,6vw,3.2rem)/1.1 "Arial Black",Impact,sans-serif}
 .hero p{margin:12px auto 0;max-width:34ch;color:var(--muted)}
 
@@ -53,7 +57,7 @@ footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-s
 
 <header>
   <div class="wrap">
-    <a class="brand" href="#top">KERALA <span>ESPORTS</span></a>
+    <a class="brand" href="#top">KLM <span>ESPORTS</span></a>
     <nav>
       <a href="#tournaments">Tournaments</a>
       <a href="#contact">Contact</a>
@@ -63,8 +67,11 @@ footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-s
 
 <main id="top">
   <div class="hero wrap">
-    <video src="intro.mp4" poster="logo.jpg" autoplay muted playsinline preload="auto" aria-label="Kerala Esports logo animation"></video>
-    <h1>Kerala Esports</h1>
+    <div class="logo-stage" id="logo-stage">
+      <img src="logo.jpg" alt="KLM Esports logo">
+      <video id="intro" src="intro.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
+    </div>
+    <h1>KLM Esports</h1>
     <p>Tournaments for Kerala’s gamers. Check back here for upcoming events.</p>
   </div>
 
@@ -89,13 +96,13 @@ footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-s
 </main>
 
 <footer>
-  <div class="wrap">© 2026 Kerala Esports</div>
+  <div class="wrap">© 2026 KLM Esports</div>
 </footer>
 
 <script>
 /* Add tournaments here. Leave the list empty to show "No tournaments yet".
    Example:
-   { name: "Kerala BGMI Cup", date: "15 Dec 2026", game: "BGMI", details: "Squad format, prize pool ₹10,000" }
+   { name: "KLM BGMI Cup", date: "15 Dec 2026", game: "BGMI", details: "Squad format, prize pool ₹10,000" }
 */
 const tournaments = [];
 
@@ -113,6 +120,20 @@ if (tournaments.length) {
     li.append(h, p);
     list.appendChild(li);
   });
+}
+
+// Play the intro once on top of the static logo, then fade back to the logo.
+// If the video can't play, the static logo simply stays visible.
+const stage = document.getElementById('logo-stage');
+const intro = document.getElementById('intro');
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  intro.remove();
+} else {
+  intro.addEventListener('playing', () => stage.classList.add('playing'));
+  intro.addEventListener('ended', () => stage.classList.remove('playing'));
+  intro.addEventListener('error', () => stage.classList.remove('playing'));
+  const tryPlay = intro.play();
+  if (tryPlay) tryPlay.catch(() => stage.classList.remove('playing'));
 }
 </script>
 </body>
