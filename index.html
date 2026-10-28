@@ -39,9 +39,27 @@ section{padding:48px 0;border-top:1px solid var(--line)}
 h2{font:900 1.6rem/1.2 "Arial Black",Impact,sans-serif;margin-bottom:20px}
 
 #tournament-list{list-style:none;padding:0;display:grid;gap:12px}
-.t-item{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--gold);padding:16px 18px;border-radius:4px}
-.t-item h3{font-size:1.1rem}
-.t-item p{color:var(--muted);font-size:.95rem}
+.t-card{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:4px;padding:20px;cursor:pointer;transition:border-color .2s,background .2s}
+.t-card:hover{border-color:var(--gold);background:#1d160c}
+.t-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.tag{font-weight:800;font-size:.85rem;padding:3px 10px;border-radius:3px;border:1.5px solid var(--gold);color:var(--gold-soft)}
+.tag.free{background:var(--palm);border-color:var(--palm);color:#0d1f08}
+.t-card h3{font:900 1.5rem/1.15 "Arial Black",Impact,sans-serif}
+.t-meta{display:flex;flex-wrap:wrap;gap:6px 24px;margin:10px 0 18px;color:var(--muted)}
+.t-meta b{color:var(--text)}
+.t-actions{display:flex;flex-wrap:wrap;gap:10px}
+.t-actions .btn{margin-top:0;text-align:center;line-height:1.25}
+.t-actions .btn small{display:block;font-weight:600;font-size:.8rem}
+.btn-outline{background:transparent;color:var(--gold-soft);border:2px solid var(--gold);cursor:pointer;font:inherit;font-weight:800;padding:10px 20px;border-radius:4px}
+.btn-outline:hover{background:rgba(224,160,48,.15)}
+
+dialog{border:1px solid var(--gold);border-radius:6px;padding:0;background:var(--bg);color:var(--text);width:min(100%,520px);max-width:calc(100% - 16px);height:min(92vh,900px)}
+dialog[open]{display:flex;flex-direction:column}
+dialog::backdrop{background:rgba(0,0,0,.8)}
+.m-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.m-bar a{color:var(--gold-soft);font-weight:700;font-size:.9rem}
+.m-close{background:var(--gold);color:#1a1205;border:0;border-radius:4px;font:inherit;font-weight:800;padding:8px 16px;cursor:pointer}
+dialog iframe{flex:1;width:100%;border:0;background:var(--bg)}
 
 .empty{background:var(--panel);border:1px dashed var(--line);border-radius:6px;padding:36px 20px;text-align:center}
 .empty strong{display:block;font-size:1.15rem;margin-bottom:6px}
@@ -99,26 +117,90 @@ footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-s
   <div class="wrap">© 2026 KLM Esports</div>
 </footer>
 
+<dialog id="details-modal" aria-label="Tournament details">
+  <div class="m-bar">
+    <a id="m-full" href="bgmi-friendly-match.html" target="_blank" rel="noopener">Open full page</a>
+    <button class="m-close" id="m-close" type="button">Close</button>
+  </div>
+  <iframe id="m-frame" title="Tournament details"></iframe>
+</dialog>
+
 <script>
 /* Add tournaments here. Leave the list empty to show "No tournaments yet".
-   Example:
-   { name: "KLM BGMI Cup", date: "15 Dec 2026", game: "BGMI", details: "Squad format, prize pool ₹10,000" }
-*/
-const tournaments = [];
+   detailsUrl = the full details page that opens in the popup. */
+const tournaments = [
+  {
+    game: "BGMI",
+    title: "Friendly Match",
+    entry: "FREE ENTRY",
+    date: "29 OCT 2026",
+    time: "10:00 PM",
+    detailsUrl: "bgmi-friendly-match.html",
+    registerUrl: "https://instagram.com/kl_masters_esports"
+  }
+];
 
 const list = document.getElementById('tournament-list');
 const empty = document.getElementById('empty-state');
+const modal = document.getElementById('details-modal');
+const frame = document.getElementById('m-frame');
+const fullLink = document.getElementById('m-full');
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text) e.textContent = text;
+  return e;
+}
+
+function openDetails(url) {
+  frame.src = url;
+  fullLink.href = url;
+  modal.showModal();
+}
+
+function closeDetails() {
+  modal.close();
+}
+
+modal.addEventListener('close', () => { frame.removeAttribute('src'); });
+modal.addEventListener('click', e => { if (e.target === modal) closeDetails(); });
+document.getElementById('m-close').addEventListener('click', closeDetails);
+
 if (tournaments.length) {
   empty.hidden = true;
   tournaments.forEach(t => {
-    const li = document.createElement('li');
-    li.className = 't-item';
-    const h = document.createElement('h3');
-    h.textContent = t.name;
-    const p = document.createElement('p');
-    p.textContent = [t.game, t.date, t.details].filter(Boolean).join(' – ');
-    li.append(h, p);
-    list.appendChild(li);
+    const li = el('li');
+    const card = el('article', 't-card');
+
+    const tags = el('div', 't-tags');
+    tags.append(el('span', 'tag', t.game), el('span', 'tag free', t.entry));
+
+    const meta = el('div', 't-meta');
+    [['Date', t.date], ['Time', t.time]].forEach(([k, v]) => {
+      const d = el('span');
+      d.append(k + ': ', el('b', '', v));
+      meta.append(d);
+    });
+
+    const actions = el('div', 't-actions');
+    const view = el('button', 'btn-outline', 'View Details');
+    view.type = 'button';
+    const reg = el('a', 'btn', 'DM to register');
+    reg.href = t.registerUrl;
+    reg.target = '_blank';
+    reg.rel = 'noopener';
+    reg.append(el('small', '', '@kl_masters_esports on Instagram'));
+    actions.append(view, reg);
+
+    card.append(tags, el('h3', '', t.title), meta, actions);
+    // Clicking anywhere on the card (or View Details) opens the popup; the register link works normally.
+    card.addEventListener('click', e => {
+      if (e.target.closest('a')) return;
+      openDetails(t.detailsUrl);
+    });
+    li.append(card);
+    list.append(li);
   });
 }
 
