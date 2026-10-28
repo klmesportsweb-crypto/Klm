@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kerala Esports</title>
+<meta name="description" content="Kerala Esports tournaments. Follow @kl_masters_esports on Instagram.">
+<link rel="icon" href="logo.jpg">
+<style>
+:root{
+  --bg:#0c0a07; --panel:#17120b; --line:#3a2d17;
+  --gold:#e0a93b; --gold-soft:#f3d38a; --palm:#4fae3a;
+  --text:#f4efe4; --muted:#a89c86;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font:16px/1.6 "Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--gold-soft);outline-offset:3px}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+
+header{border-bottom:1px solid var(--line)}
+header .wrap{display:flex;justify-content:space-between;align-items:center;height:60px}
+.brand{font:900 1.25rem/1 "Arial Black",Impact,sans-serif;letter-spacing:.04em;text-decoration:none}
+.brand span{color:var(--gold)}
+nav a{margin-left:20px;color:var(--muted);text-decoration:none;font-weight:600}
+nav a:hover{color:var(--gold-soft)}
+
+.hero{padding:32px 0 48px;text-align:center}
+.hero video{width:min(100%,420px);aspect-ratio:1;border-radius:6px;background:#000;display:block;margin:0 auto}
+.hero h1{margin-top:24px;font:900 clamp(2rem,6vw,3.2rem)/1.1 "Arial Black",Impact,sans-serif}
+.hero p{margin:12px auto 0;max-width:34ch;color:var(--muted)}
+
+section{padding:48px 0;border-top:1px solid var(--line)}
+h2{font:900 1.6rem/1.2 "Arial Black",Impact,sans-serif;margin-bottom:20px}
+
+#tournament-list{list-style:none;padding:0;display:grid;gap:12px}
+.t-item{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--gold);padding:16px 18px;border-radius:4px}
+.t-item h3{font-size:1.1rem}
+.t-item p{color:var(--muted);font-size:.95rem}
+
+.empty{background:var(--panel);border:1px dashed var(--line);border-radius:6px;padding:36px 20px;text-align:center}
+.empty strong{display:block;font-size:1.15rem;margin-bottom:6px}
+.empty p{color:var(--muted)}
+
+.btn{display:inline-block;margin-top:16px;background:var(--gold);color:#1a1205;font-weight:800;text-decoration:none;padding:12px 22px;border-radius:4px}
+.btn:hover{background:var(--gold-soft)}
+
+footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-size:.9rem;text-align:center}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="#top">KERALA <span>ESPORTS</span></a>
+    <nav>
+      <a href="#tournaments">Tournaments</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero wrap">
+    <video src="intro.mp4" poster="logo.jpg" autoplay muted playsinline preload="auto" aria-label="Kerala Esports logo animation"></video>
+    <h1>Kerala Esports</h1>
+    <p>Tournaments for Kerala’s gamers. Check back here for upcoming events.</p>
+  </div>
+
+  <section id="tournaments">
+    <div class="wrap">
+      <h2>Tournaments</h2>
+      <ul id="tournament-list"></ul>
+      <div class="empty" id="empty-state">
+        <strong>No tournaments yet</strong>
+        <p>New tournaments will be listed here. Follow us on Instagram to hear first.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap">
+      <h2>Contact us</h2>
+      <p>Message us on Instagram for registrations, sponsorships and questions.</p>
+      <a class="btn" href="https://www.instagram.com/kl_masters_esports" target="_blank" rel="noopener">@kl_masters_esports on Instagram</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">© 2026 Kerala Esports</div>
+</footer>
+
+<script>
+/* Add tournaments here. Leave the list empty to show "No tournaments yet".
+   Example:
+   { name: "Kerala BGMI Cup", date: "15 Dec 2026", game: "BGMI", details: "Squad format, prize pool ₹10,000" }
+*/
+const tournaments = [];
+
+const list = document.getElementById('tournament-list');
+const empty = document.getElementById('empty-state');
+if (tournaments.length) {
+  empty.hidden = true;
+  tournaments.forEach(t => {
+    const li = document.createElement('li');
+    li.className = 't-item';
+    const h = document.createElement('h3');
+    h.textContent = t.name;
+    const p = document.createElement('p');
+    p.textContent = [t.game, t.date, t.details].filter(Boolean).join(' – ');
+    li.append(h, p);
+    list.appendChild(li);
+  });
+}
+</script>
+</body>
+</html>
