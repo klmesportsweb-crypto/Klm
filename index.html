@@ -22,19 +22,80 @@ a{color:inherit}
 
 /* Header */
 header{background:rgba(12,9,6,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:100}
-header .wrap{max-width:1100px;display:flex;justify-content:space-between;align-items:center;gap:16px;height:68px;padding:0 20px}
+header .wrap{max-width:1100px;display:flex;justify-content:space-between;align-items:center;gap:16px;height:68px;padding:0 20px;position:relative}
 .brand{display:flex;align-items:center;gap:8px;font-weight:900;font-size:1.2rem;letter-spacing:.04em;text-decoration:none}
 .brand span{background:linear-gradient(90deg,var(--gold),var(--gold2));color:#111;padding:2px 8px;font-size:.8rem;letter-spacing:.12em;border-radius:3px}
-nav{display:flex;align-items:center;gap:24px;margin-left:auto}
-nav a{color:var(--muted);text-decoration:none;font-weight:600;font-size:.95rem;transition:color .2s}
+
+/* Hamburger Menu Icon (Mobile & Desktop) */
+.menu-btn{
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  width:26px;
+  height:19px;
+  padding:0;
+  z-index:110;
+}
+.menu-btn span{
+  display:block;
+  height:2.5px;
+  width:100%;
+  background:var(--gold2);
+  border-radius:2px;
+  transition:all .3s ease;
+}
+.menu-btn.open span:nth-child(1){
+  transform:translateY(8.25px) rotate(45deg);
+}
+.menu-btn.open span:nth-child(2){
+  opacity:0;
+}
+.menu-btn.open span:nth-child(3){
+  transform:translateY(-8.25px) rotate(-45deg);
+}
+
+/* Nav Dropdown / Drawer (Mobile & Desktop) */
+nav{
+  position:absolute;
+  top:68px;
+  right:20px;
+  width:260px;
+  background:rgba(18, 14, 9, 0.98);
+  backdrop-filter:blur(12px);
+  border:1px solid var(--line);
+  border-radius:12px;
+  display:none;
+  flex-direction:column;
+  padding:16px 20px;
+  gap:12px;
+  box-shadow:0 12px 30px rgba(0,0,0,0.8);
+  z-index:105;
+}
+nav.active{
+  display:flex;
+}
+nav a{
+  color:var(--text);
+  text-decoration:none;
+  font-weight:600;
+  font-size:0.95rem;
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+  transition:color .2s;
+}
+nav a:last-child{
+  border-bottom:none;
+}
 nav a:hover{color:var(--gold2)}
 
-/* Hero Section with Glowing Canvas */
+/* Hero Section */
 .hero{position:relative;padding:48px 0 64px;background:radial-gradient(ellipse at 50% 20%,#3a2410 0%,#150e08 55%,#0c0906 85%);overflow:hidden;border-bottom:1px solid var(--line)}
 #hero-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
 .hero .wrap{position:relative;z-index:2}
 
-/* Hero Content Grid for Desktop */
 .hero-content{
   display:flex;
   flex-direction:column;
@@ -42,7 +103,6 @@ nav a:hover{color:var(--gold2)}
   gap:24px;
 }
 
-/* Logo Slot */
 .logo-stage{
   position:relative;
   width:min(100%, 320px);
@@ -99,7 +159,6 @@ h2{color:var(--gold2);font-size:1.1rem;font-weight:800;letter-spacing:.08em;text
   box-shadow:0 8px 24px rgba(0,0,0,0.5);
 }
 
-/* Erangel Tournament Thumbnail */
 .t-thumb-wrap{position:relative;width:100%;aspect-ratio:1;border-radius:10px;overflow:hidden;background:#000;border:1px solid #332617}
 .t-thumb{display:block;width:100%;height:100%;object-fit:cover;transition:transform .4s}
 .t-card:hover .t-thumb{transform:scale(1.05)}
@@ -143,70 +202,108 @@ footer{background:#080604;border-top:1px solid var(--line);padding:40px 0 28px}
 .f-social svg{width:26px;height:26px;display:block}
 .copy{margin-top:24px;color:#6b6255;font-size:.85rem}
 
-/* Details popup */
-dialog{border:1px solid var(--line);border-radius:12px;padding:0;background:var(--bg);color:var(--text);width:min(100%,540px);max-width:calc(100% - 16px);height:min(92vh,900px);overflow:hidden}
-dialog[open]{display:flex;flex-direction:column}
-dialog::backdrop{background:rgba(0,0,0,.85);backdrop-filter:blur(4px)}
-.m-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
-.m-bar a{color:var(--gold2);font-weight:700;font-size:.9rem}
-.m-close{background:var(--gold);color:#111;border:0;border-radius:6px;font:inherit;font-weight:800;padding:8px 16px;cursor:pointer}
-dialog iframe{flex:1;width:100%;border:0;background:var(--bg)}
+/* 16:9 Landscape Result Photo Popup Modal (Centered on Mobile & Desktop) */
+dialog#image-modal{
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:0;
+  background:rgba(12, 9, 6, 0.98);
+  backdrop-filter:blur(10px);
+  color:var(--text);
+  width:min(94vw, 840px);
+  max-width:840px;
+  height:auto;
+  max-height:92vh;
+  margin:auto;
+  position:fixed;
+  inset:0;
+  box-shadow:0 24px 60px rgba(0,0,0,0.9);
+  overflow:hidden;
+}
+dialog#image-modal[open]{
+  display:flex;
+  flex-direction:column;
+}
+dialog#image-modal::backdrop{
+  background:rgba(0,0,0,.85);
+  backdrop-filter:blur(6px);
+}
+.m-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:12px 20px;
+  border-bottom:1px solid var(--line);
+  background:var(--panel);
+  flex-shrink:0;
+}
+.m-bar span{
+  color:var(--gold2);
+  font-weight:700;
+  font-size:.95rem;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.m-close{
+  background:var(--gold);
+  color:#111;
+  border:0;
+  border-radius:6px;
+  font:inherit;
+  font-weight:800;
+  padding:6px 14px;
+  cursor:pointer;
+  transition:transform .2s, filter .2s;
+}
+.m-close:hover{
+  filter:brightness(1.1);
+  transform:scale(1.03);
+}
+.m-body{
+  flex:1;
+  overflow:hidden;
+  padding:16px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#050403;
+}
+.m-body img{
+  aspect-ratio:16/9;
+  width:100%;
+  height:auto;
+  max-width:100%;
+  max-height:calc(92vh - 80px);
+  object-fit:contain;
+  border-radius:10px;
+  border:1px solid var(--line);
+  box-shadow:0 8px 30px rgba(0,0,0,0.7);
+  display:block;
+}
 
-/* =========================================
-   DESKTOP VIEW RESPONSIVE STYLING (>= 768px)
-   ========================================= */
 @media (min-width: 768px) {
-  .hero{
-    padding: 72px 0 84px;
-  }
-  .hero-content{
-    flex-direction: row-reverse;
-    align-items: center;
-    justify-content: space-between;
-    gap: 48px;
-  }
-  .logo-stage{
-    width: 360px;
-    flex-shrink: 0;
-  }
-  .hero-text{
-    flex: 1;
-  }
-  .hero h1{
-    font-size: 3.8rem;
-  }
-  .hero p{
-    font-size: 1.15rem;
-    margin-top: 18px;
-  }
-  .btn-ghost{
-    margin-top: 28px;
-    font-size: 1rem;
-    padding: 12px 24px;
-  }
-
-  /* Tournaments grid in desktop instead of single swipe scroll */
+  .hero{padding: 72px 0 84px;}
+  .hero-content{flex-direction: row-reverse;align-items: center;justify-content: space-between;gap: 48px;}
+  .logo-stage{width: 360px;flex-shrink: 0;}
+  .hero-text{flex: 1;}
+  .hero h1{font-size: 3.8rem;}
+  .hero p{font-size: 1.15rem;margin-top: 18px;}
+  .btn-ghost{margin-top: 28px;font-size: 1rem;padding: 12px 24px;}
   .t-list{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 28px;
     overflow-x: visible;
   }
-  .t-list li{
-    flex: none;
-  }
+  .t-list li{flex: none;}
 }
 
 @media (min-width: 1024px) {
-  .hero-content{
-    gap: 64px;
-  }
-  .logo-stage{
-    width: 390px;
-  }
-  .hero h1{
-    font-size: 4.2rem;
-  }
+  .hero-content{gap: 64px;}
+  .logo-stage{width: 390px;}
+  .hero h1{font-size: 4.2rem;}
 }
 </style>
 </head>
@@ -215,8 +312,17 @@ dialog iframe{flex:1;width:100%;border:0;background:var(--bg)}
 <header>
   <div class="wrap">
     <a class="brand" href="#top">KLM <span>ESPORTS</span></a>
-    <nav>
-      <a href="#tournaments">Tournaments</a>
+    
+    <!-- Hamburger button for all screen sizes -->
+    <button class="menu-btn" id="menu-btn" aria-label="Toggle Menu" type="button">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav id="nav-links">
+      <a href="#tournaments">Upcoming Tournaments</a>
+      <a href="#history">Tournament History</a>
       <a href="#contact">Contact</a>
     </nav>
   </div>
@@ -240,9 +346,10 @@ dialog iframe{flex:1;width:100%;border:0;background:var(--bg)}
     </div>
   </div>
 
+  <!-- Upcoming Tournaments Section -->
   <section id="tournaments">
     <div class="wrap">
-      <h2>Active Tournaments</h2>
+      <h2>Upcoming Tournaments</h2>
       <ul id="tournament-list" class="t-list"></ul>
       <div class="empty" id="empty-state">
         <strong>No tournaments scheduled right now</strong>
@@ -251,6 +358,7 @@ dialog iframe{flex:1;width:100%;border:0;background:var(--bg)}
     </div>
   </section>
 
+  <!-- Tournament History Section -->
   <section id="history">
     <div class="wrap">
       <h2>Tournament History</h2>
@@ -262,9 +370,10 @@ dialog iframe{flex:1;width:100%;border:0;background:var(--bg)}
     </div>
   </section>
 
+  <!-- Contact Details Section -->
   <section id="contact">
     <div class="wrap">
-      <h2>Contact us</h2>
+      <h2>Contact Us</h2>
       <p>Message us on Instagram for registrations, sponsorships and questions.</p>
       <a class="btn" href="https://www.instagram.com/kl_masters_esports" target="_blank" rel="noopener">@kl_masters_esports on Instagram</a>
     </div>
@@ -279,38 +388,65 @@ dialog iframe{flex:1;width:100%;border:0;background:var(--bg)}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
       </a>
     </div>
-    <nav class="f-links" aria-label="Footer" style="margin-left:0">
-      <a href="#tournaments">Tournaments</a>
-      <a href="#history">History</a>
-      <a href="#contact">Contact</a>
-      <a href="https://www.instagram.com/kl_masters_esports" target="_blank" rel="noopener">Instagram</a>
+    <nav class="f-links" aria-label="Footer" style="margin-left:0; position:static; width:auto; background:transparent; border:none; display:flex; flex-direction:row; padding:0; box-shadow:none;">
+      <a href="#tournaments" style="border:none;">Upcoming Tournaments</a>
+      <a href="#history" style="border:none;">Tournament History</a>
+      <a href="#contact" style="border:none;">Contact</a>
+      <a href="https://www.instagram.com/kl_masters_esports" target="_blank" rel="noopener" style="border:none;">Instagram</a>
     </nav>
     <p class="copy">© 2026 KLM Esports. All rights reserved.</p>
   </div>
 </footer>
 
-<dialog id="details-modal" aria-label="Tournament details">
+<!-- Result Photo Popup Modal (16:9 Landscape Aspect Ratio) -->
+<dialog id="image-modal" aria-label="Tournament Result">
   <div class="m-bar">
-    <a id="m-full" href="bgmi-friendly-match.html" target="_blank" rel="noopener">Open full page</a>
+    <span id="modal-title">Tournament Result</span>
     <button class="m-close" id="m-close" type="button">Close</button>
   </div>
-  <iframe id="m-frame" title="Tournament details"></iframe>
+  <div class="m-body">
+    <img id="modal-img" src="" alt="Tournament Result">
+  </div>
 </dialog>
 
 <script>
+// Toggle Hamburger Menu
+const menuBtn = document.getElementById('menu-btn');
+const navLinks = document.getElementById('nav-links');
+
+menuBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  menuBtn.classList.toggle('open');
+  navLinks.classList.toggle('active');
+});
+
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    menuBtn.classList.remove('open');
+    navLinks.classList.remove('active');
+  });
+});
+
+document.addEventListener('click', (e) => {
+  if (!navLinks.contains(e.target) && !menuBtn.contains(e.target)) {
+    menuBtn.classList.remove('open');
+    navLinks.classList.remove('active');
+  }
+});
+
 const tournaments = [
   {
     game: "BGMI",
     title: "Friendly Match",
     entry: "FREE ENTRY",
-    date: "29 OCT 2026",          // format: "29 OCT 2026"
+    date: "25 OCT 2026",
     time: "10:00 PM",
     image: "1000193608.webp",
     mapBadge: "ERANGEL",
-    detailsUrl: "bgmi-friendly-match.html",   // popup when the card is clicked
-    slotListUrl: "slot-list 1.html",          // "View Details" button goes here
+    detailsUrl: "bgmi-friendly-match.html",
+    slotListUrl: "slot-list 1.html",
     registerUrl: "registration 1.html",
-    resultUrl: ""                             // add a link when the result is published
+    resultUrl: "result-friendly-match.jpg"
   }
 ];
 
@@ -318,9 +454,9 @@ const list = document.getElementById('tournament-list');
 const histList = document.getElementById('history-list');
 const empty = document.getElementById('empty-state');
 const histEmpty = document.getElementById('history-empty');
-const modal = document.getElementById('details-modal');
-const frame = document.getElementById('m-frame');
-const fullLink = document.getElementById('m-full');
+const imgModal = document.getElementById('image-modal');
+const modalImg = document.getElementById('modal-img');
+const modalTitle = document.getElementById('modal-title');
 
 function el(tag, cls, text) {
   const e = document.createElement(tag);
@@ -329,18 +465,21 @@ function el(tag, cls, text) {
   return e;
 }
 
-function openDetails(url) {
-  frame.src = url;
-  fullLink.href = url;
-  modal.showModal();
+function showResultPopup(imgSrc, title) {
+  modalImg.src = imgSrc;
+  modalTitle.textContent = title + " - Result";
+  imgModal.showModal();
 }
-function closeDetails() { modal.close(); }
 
-modal.addEventListener('close', () => { frame.removeAttribute('src'); });
-modal.addEventListener('click', e => { if (e.target === modal) closeDetails(); });
-document.getElementById('m-close').addEventListener('click', closeDetails);
+function closePopup() { 
+  imgModal.close(); 
+  modalImg.src = "";
+}
 
-// A tournament moves to history once its date has fully passed (right after midnight at the end of that day).
+imgModal.addEventListener('close', () => { modalImg.src = ""; });
+imgModal.addEventListener('click', e => { if (e.target === imgModal) closePopup(); });
+document.getElementById('m-close').addEventListener('click', closePopup);
+
 const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
 function endOfDay(t) {
   const m = /^(\d{1,2})\s+([A-Za-z]{3})[A-Za-z]*\s+(\d{4})$/.exec(String(t.date).trim());
@@ -368,8 +507,11 @@ function buildCard(t, past) {
   const actions = el('div', 't-actions');
   if (past) {
     if (t.resultUrl) {
-      const res = el('a', 'btn-outline', 'View Result');
-      res.href = t.resultUrl;
+      const res = el('button', 'btn-outline', 'View Result');
+      res.type = 'button';
+      res.addEventListener('click', () => {
+        showResultPopup(t.resultUrl, t.game + ' ' + t.title);
+      });
       actions.append(res);
     } else {
       const res = el('button', 'btn-outline', 'View Result');
@@ -391,13 +533,6 @@ function buildCard(t, past) {
   }
 
   card.append(thumbWrap, el('div', 't-name', t.game + ' ' + t.title), el('div', 't-tag', t.entry), dates, actions);
-  if (!past) {
-    // Clicking the card opens the details popup; the buttons (links) work normally.
-    card.addEventListener('click', e => {
-      if (e.target.closest('a')) return;
-      openDetails(t.detailsUrl);
-    });
-  }
   li.append(card);
   return li;
 }
@@ -411,7 +546,6 @@ function render() {
   empty.hidden = upcoming.length > 0;
   histEmpty.hidden = past.length > 0;
 
-  // Move the next tournament to history automatically, even if the page stays open.
   clearTimeout(timer);
   if (upcoming.length && isFinite(endTime(upcoming[0]))) {
     timer = setTimeout(render, Math.min(endTime(upcoming[0]) - Date.now() + 1000, 2147483647));
