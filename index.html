@@ -70,7 +70,7 @@ section{padding:64px 0}
 h2{color:var(--gold2);font-size:1.1rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px}
 
 /* Tournament Cards List */
-#tournament-list{
+.t-list{
   list-style:none;
   padding:0 0 12px;
   display:flex;
@@ -78,7 +78,7 @@ h2{color:var(--gold2);font-size:1.1rem;font-weight:800;letter-spacing:.08em;text
   overflow-x:auto;
   scroll-snap-type:x mandatory;
 }
-#tournament-list li{
+.t-list li{
   flex:0 0 min(82%, 320px);
   scroll-snap-align:start;
 }
@@ -116,6 +116,15 @@ h2{color:var(--gold2);font-size:1.1rem;font-weight:800;letter-spacing:.08em;text
 .btn small{display:block;font-weight:600;font-size:.78rem}
 .btn-outline{background:transparent;color:var(--text);border:1px solid #554433;cursor:pointer;font:inherit;font-weight:700;padding:10px 16px;border-radius:6px;transition:.2s}
 .btn-outline:hover{border-color:var(--gold);color:var(--gold2)}
+a.btn-outline{display:block;text-align:center;text-decoration:none}
+
+/* Tournament history */
+.t-card.past{cursor:default}
+.t-card.past:hover{transform:none;border-color:var(--line);box-shadow:none}
+.t-card.past .t-thumb{filter:grayscale(.6) brightness(.8)}
+.t-card.past:hover .t-thumb{transform:none}
+.t-card.past .t-tag{color:var(--muted)}
+.t-result{margin:0;text-align:center;color:var(--muted);font-weight:600;font-size:.9rem;border:1px dashed #554433;border-radius:6px;padding:9px}
 
 .empty{background:var(--panel);border:1px dashed #3a3a3a;border-radius:14px;padding:40px 20px;text-align:center}
 .empty strong{display:block;font-size:1.15rem;margin-bottom:6px}
@@ -177,13 +186,13 @@ dialog iframe{flex:1;width:100%;border:0;background:var(--bg)}
   }
 
   /* Tournaments grid in desktop instead of single swipe scroll */
-  #tournament-list{
+  .t-list{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 28px;
     overflow-x: visible;
   }
-  #tournament-list li{
+  .t-list li{
     flex: none;
   }
 }
@@ -233,11 +242,22 @@ dialog iframe{flex:1;width:100%;border:0;background:var(--bg)}
 
   <section id="tournaments">
     <div class="wrap">
-      <h2>Tournaments</h2>
-      <ul id="tournament-list"></ul>
+      <h2>Active Tournaments</h2>
+      <ul id="tournament-list" class="t-list"></ul>
       <div class="empty" id="empty-state">
-        <strong>No tournaments yet</strong>
+        <strong>No tournaments scheduled right now</strong>
         <p>New tournaments will be listed here. Follow us on Instagram to hear first.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="history">
+    <div class="wrap">
+      <h2>Tournament History</h2>
+      <ul id="history-list" class="t-list"></ul>
+      <div class="empty" id="history-empty">
+        <strong>No past tournaments yet</strong>
+        <p>Finished tournaments move here automatically after their date.</p>
       </div>
     </div>
   </section>
@@ -261,6 +281,7 @@ dialog iframe{flex:1;width:100%;border:0;background:var(--bg)}
     </div>
     <nav class="f-links" aria-label="Footer" style="margin-left:0">
       <a href="#tournaments">Tournaments</a>
+      <a href="#history">History</a>
       <a href="#contact">Contact</a>
       <a href="https://www.instagram.com/kl_masters_esports" target="_blank" rel="noopener">Instagram</a>
     </nav>
@@ -282,17 +303,21 @@ const tournaments = [
     game: "BGMI",
     title: "Friendly Match",
     entry: "FREE ENTRY",
-    date: "29 OCT 2026",
+    date: "29 OCT 2026",          // format: "29 OCT 2026"
     time: "10:00 PM",
     image: "1000193608.webp",
     mapBadge: "ERANGEL",
-    detailsUrl: "bgmi-friendly-match.html",
-    registerUrl: "registration 1.html"
+    detailsUrl: "bgmi-friendly-match.html",   // popup when the card is clicked
+    slotListUrl: "slot-list 1.html",          // "View Details" button goes here
+    registerUrl: "registration 1.html",
+    resultUrl: ""                             // add a link when the result is published
   }
 ];
 
 const list = document.getElementById('tournament-list');
+const histList = document.getElementById('history-list');
 const empty = document.getElementById('empty-state');
+const histEmpty = document.getElementById('history-empty');
 const modal = document.getElementById('details-modal');
 const frame = document.getElementById('m-frame');
 const fullLink = document.getElementById('m-full');
@@ -315,45 +340,85 @@ modal.addEventListener('close', () => { frame.removeAttribute('src'); });
 modal.addEventListener('click', e => { if (e.target === modal) closeDetails(); });
 document.getElementById('m-close').addEventListener('click', closeDetails);
 
-if (tournaments.length) {
-  empty.hidden = true;
-  tournaments.forEach(t => {
-    const li = el('li');
-    const card = el('article', 't-card');
+// A tournament moves to history once its date has fully passed (right after midnight at the end of that day).
+const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+function endOfDay(t) {
+  const m = /^(\d{1,2})\s+([A-Za-z]{3})[A-Za-z]*\s+(\d{4})$/.exec(String(t.date).trim());
+  if (!m) return null;
+  const mon = MONTHS.indexOf(m[2].toUpperCase());
+  return mon < 0 ? null : new Date(+m[3], mon, +m[1] + 1);
+}
+function endTime(t) { const e = endOfDay(t); return e ? e.getTime() : Infinity; }
+function isPast(t) { return endTime(t) <= Date.now(); }
 
-    const thumbWrap = el('div', 't-thumb-wrap');
-    const img = el('img', 't-thumb');
-    img.src = t.image;
-    img.alt = t.game + ' Erangel Map';
-    thumbWrap.append(img);
+function buildCard(t, past) {
+  const li = el('li');
+  const card = el('article', 't-card' + (past ? ' past' : ''));
 
-    if(t.mapBadge){
-      const badge = el('span', 't-badge', t.mapBadge);
-      thumbWrap.append(badge);
+  const thumbWrap = el('div', 't-thumb-wrap');
+  const img = el('img', 't-thumb');
+  img.src = t.image;
+  img.alt = t.game + ' ' + t.title;
+  thumbWrap.append(img);
+  if (t.mapBadge) thumbWrap.append(el('span', 't-badge', t.mapBadge));
+
+  const dates = el('div', 't-dates');
+  dates.append(el('small', '', past ? 'Held on' : 'Date and time'), el('span', '', t.date + ' · ' + t.time));
+
+  const actions = el('div', 't-actions');
+  if (past) {
+    if (t.resultUrl) {
+      const res = el('a', 'btn-outline', 'View Result');
+      res.href = t.resultUrl;
+      actions.append(res);
+    } else {
+      const res = el('button', 'btn-outline', 'View Result');
+      res.type = 'button';
+      const note = el('p', 't-result', 'Result Not Published');
+      note.setAttribute('role', 'status');
+      note.hidden = true;
+      res.addEventListener('click', () => { note.hidden = !note.hidden; });
+      actions.append(res, note);
     }
-
-    const dates = el('div', 't-dates');
-    dates.append(el('small', '', 'Date and time'), el('span', '', t.date + ' · ' + t.time));
-
-    const actions = el('div', 't-actions');
-    const view = el('button', 'btn-outline', 'View Details');
-    view.type = 'button';
+  } else {
+    const view = el('a', 'btn-outline', 'View Details');
+    view.href = t.slotListUrl;
     const reg = el('a', 'btn', 'Book Your Slot');
     reg.href = t.registerUrl;
-    // reg.target = '_blank';
     reg.rel = 'noopener';
     reg.append(el('small', '', 'Free Tournament Entry'));
     actions.append(view, reg);
+  }
 
-    card.append(thumbWrap, el('div', 't-name', t.game + ' ' + t.title), el('div', 't-tag', t.entry), dates, actions);
+  card.append(thumbWrap, el('div', 't-name', t.game + ' ' + t.title), el('div', 't-tag', t.entry), dates, actions);
+  if (!past) {
+    // Clicking the card opens the details popup; the buttons (links) work normally.
     card.addEventListener('click', e => {
       if (e.target.closest('a')) return;
       openDetails(t.detailsUrl);
     });
-    li.append(card);
-    list.append(li);
-  });
+  }
+  li.append(card);
+  return li;
 }
+
+let timer;
+function render() {
+  const upcoming = tournaments.filter(t => !isPast(t)).sort((a, b) => endTime(a) - endTime(b));
+  const past = tournaments.filter(isPast).sort((a, b) => endTime(b) - endTime(a));
+  list.replaceChildren(...upcoming.map(t => buildCard(t, false)));
+  histList.replaceChildren(...past.map(t => buildCard(t, true)));
+  empty.hidden = upcoming.length > 0;
+  histEmpty.hidden = past.length > 0;
+
+  // Move the next tournament to history automatically, even if the page stays open.
+  clearTimeout(timer);
+  if (upcoming.length && isFinite(endTime(upcoming[0]))) {
+    timer = setTimeout(render, Math.min(endTime(upcoming[0]) - Date.now() + 1000, 2147483647));
+  }
+}
+render();
+document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
 
 const stage = document.getElementById('logo-stage');
 const intro = document.getElementById('intro');
