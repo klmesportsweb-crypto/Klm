@@ -287,7 +287,7 @@ const tournaments = [
     image: "1000193608.webp",
     mapBadge: "ERANGEL",
     detailsUrl: "bgmi-friendly-match.html",
-    registerUrl: "https://instagram.com/kl_masters_esports"
+    registerUrl: "registration 1.html"
   }
 ];
 
@@ -338,11 +338,11 @@ if (tournaments.length) {
     const actions = el('div', 't-actions');
     const view = el('button', 'btn-outline', 'View Details');
     view.type = 'button';
-    const reg = el('a', 'btn', 'DM to register');
+    const reg = el('a', 'btn', 'Book Your Slot');
     reg.href = t.registerUrl;
-    reg.target = '_blank';
+    // reg.target = '_blank';
     reg.rel = 'noopener';
-    reg.append(el('small', '', '@kl_masters_esports on Instagram'));
+    reg.append(el('small', '', 'Free Tournament Entry'));
     actions.append(view, reg);
 
     card.append(thumbWrap, el('div', 't-name', t.game + ' ' + t.title), el('div', 't-tag', t.entry), dates, actions);
