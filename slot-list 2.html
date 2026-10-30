@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Official Slot List - KLM Esports</title>
+<link rel="icon" href="logo.jpg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700;800&display=swap">
+<style>
+:root {
+ --bg: #0c0906;
+ --panel: #17120c;
+ --panel2: #221b12;
+ --line: #332617;
+ --gold: #e0a030;
+ --gold2: #ffd27a;
+ --green: #6cc04a;
+ --red: #ff4747;
+ --text: #ffffff;
+ --muted: #a39580;
+ color-scheme: dark;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+ background: var(--bg);
+ color: var(--text);
+ font-family: 'Barlow Condensed', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+ min-height: 100vh;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ position: relative;
+ overflow-x: hidden;
+ padding: 24px 16px 40px;
+}
+canvas#bg-canvas {
+ position: fixed;
+ inset: 0;
+ width: 100%;
+ height: 100%;
+ pointer-events: none;
+ z-index: 0;
+}
+.wrap {
+ width: 100%;
+ max-width: 600px;
+ position: relative;
+ z-index: 1;
+ margin: 0 auto;
+}
+.top-nav {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ margin-bottom: 24px;
+}
+.brand {
+ font-size: 1.3rem;
+ font-weight: 900;
+ text-decoration: none;
+ color: #fff;
+ letter-spacing: .05em;
+ display: flex;
+ align-items: center;
+ gap: 6px;
+}
+.brand span {
+ background: linear-gradient(90deg, var(--gold), var(--gold2));
+ color: #111;
+ padding: 2px 8px;
+ font-size: .8rem;
+ border-radius: 3px;
+ letter-spacing: .12em;
+}
+.back-btn {
+ color: var(--muted);
+ text-decoration: none;
+ font-size: .95rem;
+ font-weight: 600;
+ border: 1px solid var(--line);
+ padding: 6px 14px;
+ border-radius: 6px;
+ background: var(--panel);
+ transition: .2s;
+}
+.back-btn:hover {
+ color: var(--gold2);
+ border-color: var(--gold);
+}
+.card {
+ background: rgba(23, 18, 12, 0.95);
+ backdrop-filter: blur(12px);
+ border: 1px solid var(--line);
+ border-radius: 18px;
+ padding: 28px 20px;
+ box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 25px rgba(224,160,48,0.15);
+}
+.badge-tag {
+ display: inline-block;
+ font-size: .8rem;
+ font-weight: 700;
+ letter-spacing: .15em;
+ text-transform: uppercase;
+ color: var(--gold2);
+ border: 1px solid var(--gold);
+ padding: 4px 12px;
+ border-radius: 4px;
+ margin-bottom: 12px;
+}
+h1 {
+ font-family: 'Anton', Impact, sans-serif;
+ font-size: clamp(2rem, 7vw, 2.5rem);
+ text-transform: uppercase;
+ letter-spacing: .03em;
+ line-height: 1.1;
+ color: #fff;
+ margin-bottom: 6px;
+}
+.desc {
+ color: var(--muted);
+ font-size: 1rem;
+ line-height: 1.4;
+ margin-bottom: 22px;
+}
+
+.stats-bar {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ background: rgba(0,0,0,0.4);
+ border: 1px solid var(--line);
+ border-radius: 10px;
+ padding: 12px 16px;
+ margin-bottom: 20px;
+}
+.stat-item {
+ display: flex;
+ flex-direction: column;
+}
+.stat-label {
+ font-size: .75rem;
+ text-transform: uppercase;
+ color: var(--muted);
+ letter-spacing: .08em;
+}
+.stat-val {
+ font-family: 'Anton', Impact, sans-serif;
+ font-size: 1.4rem;
+ color: var(--gold2);
+}
+
+.slot-grid {
+ display: flex;
+ flex-direction: column;
+ gap: 10px;
+}
+.slot-row {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ padding: 14px 16px;
+ border-radius: 8px;
+ background: #110d09;
+ border: 1px solid var(--line);
+ transition: transform .15s, border-color .15s;
+}
+.slot-row.booked {
+ border-color: rgba(224, 160, 48, 0.4);
+ background: rgba(224, 160, 48, 0.04);
+}
+.slot-row.empty {
+ border-style: dashed;
+ opacity: 0.65;
+}
+.slot-left {
+ display: flex;
+ align-items: center;
+ gap: 14px;
+}
+.slot-number {
+ font-family: 'Anton', Impact, sans-serif;
+ font-size: 1.25rem;
+ color: var(--gold);
+ background: rgba(224, 160, 48, 0.12);
+ width: 44px;
+ height: 44px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ border-radius: 6px;
+ border: 1px solid rgba(224, 160, 48, 0.3);
+ flex-shrink: 0;
+}
+.slot-info {
+ display: flex;
+ flex-direction: column;
+}
+.slot-team {
+ font-size: 1.2rem;
+ font-weight: 700;
+ letter-spacing: .04em;
+ color: #fff;
+ text-transform: uppercase;
+}
+.slot-status-pill {
+ font-size: .78rem;
+ font-weight: 800;
+ letter-spacing: .08em;
+ text-transform: uppercase;
+ padding: 5px 12px;
+ border-radius: 4px;
+}
+.pill-confirmed {
+ background: rgba(108, 192, 74, 0.15);
+ color: var(--green);
+ border: 1px solid var(--green);
+}
+.pill-available {
+ background: rgba(255, 255, 255, 0.05);
+ color: var(--muted);
+ border: 1px solid var(--line);
+}
+
+.loader-box {
+ text-align: center;
+ padding: 30px;
+ color: var(--gold2);
+ font-size: 1.1rem;
+ font-weight: 700;
+ display: flex;
+ flex-direction: column;
+ align-items: center;
+ gap: 12px;
+}
+.spinner {
+ width: 28px;
+ height: 28px;
+ border: 3px solid rgba(224, 160, 48, 0.2);
+ border-top-color: var(--gold);
+ border-radius: 50%;
+ animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.reg-link-btn {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ gap: 8px;
+ width: 100%;
+ background: linear-gradient(90deg, var(--gold), var(--gold2));
+ color: #1a1004;
+ font-family: inherit;
+ font-size: 1.2rem;
+ font-weight: 800;
+ letter-spacing: .05em;
+ text-transform: uppercase;
+ text-decoration: none;
+ padding: 13px;
+ border-radius: 8px;
+ margin-top: 22px;
+ transition: filter .2s;
+}
+.reg-link-btn:hover {
+ filter: brightness(1.1);
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="wrap">
+ <div class="top-nav">
+ <a href="index.html" class="brand">KLM <span>ESPORTS</span></a>
+ <a href="Registration Page 2.html" class="back-btn">← Register Slot</a>
+ </div>
+
+ <div class="card">
+ <div class="badge-tag">TOURNAMENT ROSTER</div>
+ <h1>CONFIRMED SLOT LIST</h1>
+ <p class="desc">Live official list of approved teams for the upcoming tournament.</p>
+
+ <div class="stats-bar">
+ <div class="stat-item">
+ <span class="stat-label">Total Slots</span>
+ <span class="stat-val">20</span>
+ </div>
+ <div class="stat-item">
+ <span class="stat-label">Confirmed Teams</span>
+ <span class="stat-val" id="confirmedCount">--</span>
+ </div>
+ <div class="stat-item">
+ <span class="stat-label">Available Slots</span>
+ <span class="stat-val" id="availableCount">--</span>
+ </div>
+ </div>
+
+ <div class="loader-box" id="loader">
+ <div class="spinner"></div>
+ <span>Loading official slot list...</span>
+ </div>
+
+ <div class="slot-grid" id="slotGrid" style="display:none;"></div>
+
+ <a href="Registration Page 2.html" class="reg-link-btn" id="regBottomBtn">
+ Book Your Slot Now →
+ </a>
+ </div>
+</div>
+
+<script>
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxbiDorO1PJv81PEwIhg9QfnJkLraOcDxd9gk-6QdKxUm0Zc33jUs0pkdmS5oK3gi9/exec";
+const TOTAL_SLOTS = 20;
+
+const slotGrid = document.getElementById('slotGrid');
+const loader = document.getElementById('loader');
+const confirmedCountEl = document.getElementById('confirmedCount');
+const availableCountEl = document.getElementById('availableCount');
+const regBottomBtn = document.getElementById('regBottomBtn');
+
+async function loadSlotList() {
+ let approvedTeams = [];
+
+ try {
+   const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSlotList`);
+   const data = await res.json();
+   if (data && Array.isArray(data.teams)) {
+     approvedTeams = data.teams;
+   }
+ } catch(err) {
+   console.warn("Could not fetch slot list:", err);
+ }
+
+ renderSlots(approvedTeams);
+}
+
+function renderSlots(teams) {
+ loader.style.display = 'none';
+ slotGrid.style.display = 'flex';
+ slotGrid.innerHTML = '';
+
+ const confirmedCount = teams.length;
+ const remaining = Math.max(0, TOTAL_SLOTS - confirmedCount);
+
+ confirmedCountEl.textContent = confirmedCount;
+ availableCountEl.textContent = remaining;
+
+ if (remaining === 0) {
+   regBottomBtn.style.opacity = '0.5';
+   regBottomBtn.style.pointerEvents = 'none';
+   regBottomBtn.textContent = 'All 20 Slots Filled';
+ }
+
+ for (let slotNum = 1; slotNum <= TOTAL_SLOTS; slotNum++) {
+   const team = teams[slotNum - 1];
+   const row = document.createElement('div');
+
+   if (team) {
+     row.className = 'slot-row booked';
+     row.innerHTML = `
+     <div class="slot-left">
+       <div class="slot-number">#${slotNum < 10 ? '0' + slotNum : slotNum}</div>
+       <div class="slot-info">
+         <span class="slot-team">${escapeHtml(team.teamName)}</span>
+       </div>
+     </div>
+     <span class="slot-status-pill pill-confirmed">CONFIRMED</span>
+     `;
+   } else {
+     row.className = 'slot-row empty';
+     row.innerHTML = `
+     <div class="slot-left">
+       <div class="slot-number" style="opacity:0.4;">#${slotNum < 10 ? '0' + slotNum : slotNum}</div>
+       <div class="slot-info">
+         <span class="slot-team" style="color:var(--muted);">Available Slot</span>
+       </div>
+     </div>
+     <span class="slot-status-pill pill-available">AVAILABLE</span>
+     `;
+   }
+
+   slotGrid.appendChild(row);
+ }
+}
+
+function escapeHtml(text) {
+ if (!text) return '';
+ return String(text).replace(/[&<>"']/g, function(m) {
+   return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+ });
+}
+
+loadSlotList();
+
+(function(){
+ var c = document.getElementById('bg-canvas');
+ if(!c) return;
+ var x = c.getContext('2d'), W, H, P = [];
+ function rs(){ W = c.width = window.innerWidth; H = c.height = window.innerHeight; }
+ rs();
+ window.addEventListener('resize', rs);
+ for(var i=0; i<30; i++){
+   P.push({
+     x: Math.random(),
+     y: Math.random(),
+     r: Math.random() * 2 + 0.6,
+     s: Math.random() * 0.0006 + 0.0002,
+     d: Math.random() * 6
+   });
+ }
+ function f(t){
+   x.clearRect(0,0,W,H);
+   for(var i=0; i<P.length; i++){
+     var p = P[i];
+     p.y -= p.s;
+     if(p.y < 0){ p.y = 1; p.x = Math.random(); }
+     var px = (p.x + Math.sin(t/1500 + p.d) * 0.02) * W;
+     x.beginPath();
+     x.arc(px, p.y * H, p.r, 0, Math.PI * 2);
+     x.fillStyle = 'rgba(255,' + (150 + p.r * 30 | 0) + ',60,' + (0.3 + Math.sin(t/400 + p.d) * 0.2) + ')';
+     x.fill();
+   }
+   requestAnimationFrame(f);
+ }
+ requestAnimationFrame(f);
+})();
+</script>
+</body>
+</html>
