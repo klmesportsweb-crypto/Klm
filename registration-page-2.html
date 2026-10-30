@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tournament Registration - KLM Esports</title>
+<link rel="icon" href="logo.jpg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700;800&display=swap">
+<style>
+:root {
+  --bg: #0c0906;
+  --panel: #17120c;
+  --panel2: #221b12;
+  --line: #332617;
+  --gold: #e0a030;
+  --gold2: #ffd27a;
+  --green: #6cc04a;
+  --red: #ff4747;
+  --text: #ffffff;
+  --muted: #a39580;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow Condensed', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow-x: hidden;
+  padding: 24px 16px 40px;
+}
+canvas#bg-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+.wrap {
+  width: 100%;
+  max-width: 520px;
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+}
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.brand {
+  font-size: 1.3rem;
+  font-weight: 900;
+  text-decoration: none;
+  color: #fff;
+  letter-spacing: .05em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.brand span {
+  background: linear-gradient(90deg, var(--gold), var(--gold2));
+  color: #111;
+  padding: 2px 8px;
+  font-size: .8rem;
+  border-radius: 3px;
+  letter-spacing: .12em;
+}
+.back-btn {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: .95rem;
+  font-weight: 600;
+  border: 1px solid var(--line);
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: var(--panel);
+  transition: .2s;
+}
+.back-btn:hover {
+  color: var(--gold2);
+  border-color: var(--gold);
+}
+.form-card {
+  background: rgba(23, 18, 12, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 32px 24px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6), 0 0 25px rgba(224,160,48,0.15);
+}
+.badge-tag {
+  display: inline-block;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--gold2);
+  border: 1px solid var(--gold);
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+h1 {
+  font-family: 'Anton', Impact, sans-serif;
+  font-size: clamp(2rem, 7vw, 2.5rem);
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  line-height: 1.1;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.desc {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+
+.slot-link-wrapper {
+  text-decoration: none;
+  display: block;
+  margin-bottom: 24px;
+}
+.slot-container {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color .3s, background .3s, transform .15s;
+  cursor: pointer;
+}
+.slot-container:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+.slot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.slot-label {
+  font-size: .95rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.slot-badge {
+  font-family: 'Anton', Impact, sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: .04em;
+  color: var(--gold2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.slot-badge span.total {
+  font-size: 1rem;
+  color: var(--muted);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 600;
+}
+.slot-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: #251b11;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.slot-bar-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold2));
+  border-radius: 4px;
+  transition: width 0.5s ease-in-out, background 0.3s;
+}
+.slot-footer-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2px;
+}
+.slot-footer-action span.hint {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.slot-footer-action span.link-text {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--gold2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.slot-container.full {
+  border-color: var(--red);
+  background: rgba(255, 71, 71, 0.08);
+}
+.slot-container.full .slot-badge {
+  color: var(--red);
+  font-size: 1.3rem;
+  animation: pulseFull 1.5s infinite;
+}
+.slot-container.full .slot-bar-fill {
+  background: var(--red);
+  width: 0% !important;
+}
+@keyframes pulseFull {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.02); }
+}
+
+.slots-full-alert {
+  display: none;
+  background: rgba(255, 71, 71, 0.15);
+  border: 1.5px solid var(--red);
+  color: #ff9999;
+  padding: 16px;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: .05em;
+  margin-bottom: 20px;
+}
+
+/* Payment Section Styling */
+.payment-section {
+  background: #110d08;
+  border: 1.5px solid var(--gold);
+  border-radius: 12px;
+  padding: 20px 16px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.payment-title {
+  font-family: 'Anton', Impact, sans-serif;
+  font-size: 1.35rem;
+  color: var(--gold2);
+  letter-spacing: .04em;
+  margin-bottom: 14px;
+}
+.qr-wrapper {
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 10px;
+  display: inline-block;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+.qr-wrapper img {
+  display: block;
+  width: 170px;
+  height: 170px;
+}
+.upi-info {
+  font-size: .95rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.upi-info strong {
+  color: #fff;
+  user-select: all;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+label {
+  display: block;
+  font-size: .95rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--gold2);
+  margin-bottom: 6px;
+}
+label span.req {
+  color: #ff5555;
+}
+input {
+  width: 100%;
+  background: #0f0b07;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 1.05rem;
+  transition: border-color .2s, box-shadow .2s;
+  outline: none;
+}
+input:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 12px rgba(224, 160, 48, 0.35);
+}
+input.input-error {
+  border-color: var(--red) !important;
+  box-shadow: 0 0 10px rgba(255, 71, 71, 0.3) !important;
+}
+input::placeholder {
+  color: #554433;
+  font-size: .95rem;
+}
+.helper-text {
+  font-size: .8rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.field-error-msg {
+  display: none;
+  font-size: .82rem;
+  color: var(--red);
+  margin-top: 5px;
+  font-weight: 600;
+}
+
+.submit-btn {
+  width: 100%;
+  margin-top: 10px;
+  background: linear-gradient(90deg, var(--gold), var(--gold2));
+  color: #1a1004;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-family: inherit;
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: filter .2s, transform .1s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.submit-btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+.submit-btn:active:not(:disabled) {
+  transform: scale(0.99);
+}
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+  background: #332617;
+  color: #887766;
+}
+.spinner {
+  display: none;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(0,0,0,0.3);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.msg-box {
+  display: none;
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.msg-success {
+  background: rgba(108, 192, 74, 0.15);
+  border: 1px solid var(--green);
+  color: var(--green);
+}
+.msg-error {
+  background: rgba(255, 85, 85, 0.15);
+  border: 1px solid #ff5555;
+  color: #ff7777;
+}
+.footer-note {
+  margin-top: 24px;
+  text-align: center;
+  color: var(--muted);
+  font-size: .85rem;
+}
+.footer-note a {
+  color: var(--gold2);
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="wrap">
+  <div class="top-nav">
+    <a href="index.html" class="brand">KLM <span>ESPORTS</span></a>
+    <a href="index.html" class="back-btn">← Back to Home</a>
+  </div>
+
+  <div class="form-card">
+    <div class="badge-tag">OFFICIAL REGISTRATION</div>
+    <h1>TOURNAMENT ENTRY</h1>
+    <p class="desc">Scan the QR code, pay the registration fee, and submit your team & payment details.</p>
+
+    <!-- LIVE CONFIRMED SLOT COUNTER -->
+    <a href="slot-list-page-2.html" class="slot-link-wrapper" title="Click to view full booked slot list">
+      <div class="slot-container" id="slotContainer">
+        <div class="slot-header">
+          <span class="slot-label" id="slotStatusLabel">Confirmed Slots</span>
+          <div class="slot-badge" id="slotCounterDisplay">
+            <span id="remainingSlots">20</span> <span class="total">/ 20</span>
+          </div>
+        </div>
+        <div class="slot-bar-bg">
+          <div class="slot-bar-fill" id="slotBarFill"></div>
+        </div>
+        <div class="slot-footer-action">
+          <span class="hint">Official Roster</span>
+          <span class="link-text">View Booked Slots List →</span>
+        </div>
+      </div>
+    </a>
+
+    <!-- ALERT WHEN SLOTS ARE FULL -->
+    <div class="slots-full-alert" id="slotsFullAlert">
+      ⛔ REGISTRATION CLOSED · ALL 20 SLOTS ARE FILLED!
+    </div>
+
+    <!-- PAYMENT QR CODE SECTION -->
+    <div class="payment-section">
+      <div class="payment-title">SCAN & PAY ENTRY FEE</div>
+      <div class="qr-wrapper">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=upi%3A%2F%2Fpay%3Fpa%3DBibin2006r%40okicici%26pn%3DBibinraj%20R%26cu%3DINR" alt="UPI QR Code">
+      </div>
+      <div class="upi-info">
+        UPI ID: <strong>Bibin2006r@okicici</strong><br>
+        Payee Name: <strong>Bibinraj R</strong><br>
+        Scan using GPay, PhonePe, Paytm, or any UPI App
+      </div>
+    </div>
+
+    <form id="regForm" novalidate>
+      <!-- Team Name -->
+      <div class="form-group">
+        <label for="teamName">Team Name <span class="req">*</span></label>
+        <input type="text" id="teamName" name="teamName" placeholder="Enter your team name" required>
+        <div class="field-error-msg" id="teamNameError">Please enter your team name.</div>
+      </div>
+
+      <!-- In-Game Name -->
+      <div class="form-group">
+        <label for="ign">BGMI In-Game Name (IGN) <span class="req">*</span></label>
+        <input type="text" id="ign" name="ign" placeholder="e.g. SoulMortal or Jonathan" required>
+        <div class="helper-text">Enter your in-game display name</div>
+        <div class="field-error-msg" id="ignError">Please enter your in-game name.</div>
+      </div>
+
+      <!-- Character ID -->
+      <div class="form-group">
+        <label for="characterId">BGMI Character ID <span class="req">*</span></label>
+        <input type="text" id="characterId" name="characterId" inputmode="numeric" maxlength="12" placeholder="e.g. 5123456789" required>
+        <div class="helper-text">Must be a valid 9 to 12 digit numeric ID (usually starts with 5)</div>
+        <div class="field-error-msg" id="characterIdError">Please enter a valid 9 to 12 digit BGMI Character ID (digits only).</div>
+      </div>
+
+      <!-- Email Address -->
+      <div class="form-group">
+        <label for="email">Email Address <span class="req">*</span></label>
+        <input type="email" id="email" name="email" placeholder="example@gmail.com" required>
+        <div class="field-error-msg" id="emailError">Please enter a valid email address (e.g. name@gmail.com).</div>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="form-group">
+        <label for="contact">WhatsApp Number or Instagram ID <span class="req">*</span></label>
+        <input type="text" id="contact" name="contact" placeholder="e.g. 9876543210 or @insta_handle" required>
+        <div class="helper-text">Enter a valid 10-digit WhatsApp number or Instagram ID (starting with @)</div>
+        <div class="field-error-msg" id="contactError">Please enter a valid 10-digit mobile number or Instagram username (@handle).</div>
+      </div>
+
+      <!-- Payment Sender UPI ID -->
+      <div class="form-group">
+        <label for="paymentUpiId">Your Payment UPI ID <span class="req">*</span></label>
+        <input type="text" id="paymentUpiId" name="paymentUpiId" placeholder="e.g. yourname@oksbi / yourname@upi" required>
+        <div class="helper-text">The UPI ID from which you transferred payment</div>
+        <div class="field-error-msg" id="paymentUpiIdError">Please enter the UPI ID used for payment.</div>
+      </div>
+
+      <!-- Payment Sender UPI Name -->
+      <div class="form-group">
+        <label for="paymentUpiName">Name in UPI Account <span class="req">*</span></label>
+        <input type="text" id="paymentUpiName" name="paymentUpiName" placeholder="e.g. Rahul Sharma" required>
+        <div class="helper-text">Sender display name shown on Google Pay / PhonePe</div>
+        <div class="field-error-msg" id="paymentUpiNameError">Please enter the sender name in UPI.</div>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span class="spinner" id="btnSpinner"></span>
+        <span id="btnText">SUBMIT REGISTRATION</span>
+      </button>
+
+      <!-- Feedback Messages -->
+      <div id="successMsg" class="msg-box msg-success">
+        🎉 <strong>Registration Submitted!</strong><br>
+        Your application is pending admin review. Once verified and approved, your slot will be officially confirmed in the slot list!
+      </div>
+      <div id="errorMsg" class="msg-box msg-error">
+        ⚠️ <strong>Registration failed.</strong> Please try again later or contact us on Instagram.
+      </div>
+    </form>
+  </div>
+
+  <div class="footer-note">
+    Follow us on <a href="https://www.instagram.com/kl_masters_esports" target="_blank" rel="noopener">@kl_masters_esports</a> for verified slot list & updates.
+  </div>
+</div>
+
+<script>
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyxbiDorO1PJv81PEwIhg9QfnJkLraOcDxd9gk-6QdKxUm0Zc33jUs0pkdmS5oK3gi9/exec";
+const TOTAL_SLOTS = 20;
+
+let remainingSlotsCount = TOTAL_SLOTS;
+
+const form = document.getElementById('regForm');
+const submitBtn = document.getElementById('submitBtn');
+const btnSpinner = document.getElementById('btnSpinner');
+const btnText = document.getElementById('btnText');
+const successMsg = document.getElementById('successMsg');
+const errorMsg = document.getElementById('errorMsg');
+
+const slotContainer = document.getElementById('slotContainer');
+const slotStatusLabel = document.getElementById('slotStatusLabel');
+const slotCounterDisplay = document.getElementById('slotCounterDisplay');
+const slotBarFill = document.getElementById('slotBarFill');
+const slotsFullAlert = document.getElementById('slotsFullAlert');
+
+// Field inputs
+const teamNameInput = document.getElementById('teamName');
+const ignInput = document.getElementById('ign');
+const characterIdInput = document.getElementById('characterId');
+const emailInput = document.getElementById('email');
+const contactInput = document.getElementById('contact');
+const paymentUpiIdInput = document.getElementById('paymentUpiId');
+const paymentUpiNameInput = document.getElementById('paymentUpiName');
+
+const teamNameError = document.getElementById('teamNameError');
+const ignError = document.getElementById('ignError');
+const characterIdError = document.getElementById('characterIdError');
+const emailError = document.getElementById('emailError');
+const contactError = document.getElementById('contactError');
+const paymentUpiIdError = document.getElementById('paymentUpiIdError');
+const paymentUpiNameError = document.getElementById('paymentUpiNameError');
+
+// Validation Patterns
+const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+const PHONE_REGEX = /^[6-9]\d{9}$/;
+const INSTA_REGEX = /^@?[a-zA-Z0-9._]{1,30}$/;
+const BGMI_ID_REGEX = /^[0-9]{9,12}$/;
+const UPI_ID_REGEX = /^[\w.-]+@[\w.-]+$/;
+
+function validateEmail(val) {
+  return EMAIL_REGEX.test(val.trim());
+}
+
+function validateCharacterId(val) {
+  const cleanId = val.trim().replace(/\s+/g, '');
+  return BGMI_ID_REGEX.test(cleanId);
+}
+
+function validateContact(val) {
+  const v = val.trim();
+  const cleanPhone = v.replace(/[\s\-\+]/g, '').replace(/^91/, '').replace(/^0/, '');
+  if (PHONE_REGEX.test(cleanPhone)) return true;
+  if (INSTA_REGEX.test(v) && !/^\d+$/.test(v)) return true;
+  return false;
+}
+
+characterIdInput.addEventListener('input', function() {
+  this.value = this.value.replace(/[^0-9]/g, '');
+});
+
+[teamNameInput, ignInput, characterIdInput, emailInput, contactInput, paymentUpiIdInput, paymentUpiNameInput].forEach(inp => {
+  inp.addEventListener('input', () => {
+    inp.classList.remove('input-error');
+    const err = document.getElementById(inp.id + 'Error');
+    if (err) err.style.display = 'none';
+  });
+});
+
+function updateSlotUI(remaining) {
+  remainingSlotsCount = Math.max(0, remaining);
+  const percentage = (remainingSlotsCount / TOTAL_SLOTS) * 100;
+
+  if (remainingSlotsCount <= 0) {
+    slotContainer.classList.add('full');
+    slotStatusLabel.textContent = "Status";
+    slotCounterDisplay.innerHTML = "SLOTS FULL";
+    slotBarFill.style.width = "0%";
+    slotsFullAlert.style.display = "block";
+
+    const inputs = form.querySelectorAll('input');
+    inputs.forEach(input => input.disabled = true);
+    submitBtn.disabled = true;
+    btnText.textContent = "SLOTS FULL";
+  } else {
+    slotContainer.classList.remove('full');
+    slotStatusLabel.textContent = "Confirmed Slots Left";
+    slotCounterDisplay.innerHTML = `${remainingSlotsCount} <span class="total">/ ${TOTAL_SLOTS}</span>`;
+    slotBarFill.style.width = `${percentage}%`;
+    slotsFullAlert.style.display = "none";
+
+    const inputs = form.querySelectorAll('input');
+    inputs.forEach(input => input.disabled = false);
+    submitBtn.disabled = false;
+    btnText.textContent = "SUBMIT REGISTRATION";
+  }
+}
+
+async function fetchLiveSlots() {
+  try {
+    const res = await fetch(`${GOOGLE_SCRIPT_URL}?action=getSlots`);
+    const data = await res.json();
+    if (data && typeof data.remaining !== 'undefined') {
+      updateSlotUI(data.remaining);
+    } else if (data && typeof data.registeredCount !== 'undefined') {
+      updateSlotUI(TOTAL_SLOTS - data.registeredCount);
+    }
+  } catch (err) {
+    console.warn("Could not fetch live slots:", err);
+  }
+}
+
+fetchLiveSlots();
+
+form.addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  if (remainingSlotsCount <= 0) {
+    alert("Sorry! All slots are already filled.");
+    return;
+  }
+
+  let isValid = true;
+
+  if (!teamNameInput.value.trim()) {
+    teamNameInput.classList.add('input-error');
+    teamNameError.style.display = 'block';
+    isValid = false;
+  }
+  if (!ignInput.value.trim()) {
+    ignInput.classList.add('input-error');
+    ignError.style.display = 'block';
+    isValid = false;
+  }
+  if (!validateCharacterId(characterIdInput.value)) {
+    characterIdInput.classList.add('input-error');
+    characterIdError.style.display = 'block';
+    isValid = false;
+  }
+  if (!validateEmail(emailInput.value)) {
+    emailInput.classList.add('input-error');
+    emailError.style.display = 'block';
+    isValid = false;
+  }
+  if (!validateContact(contactInput.value)) {
+    contactInput.classList.add('input-error');
+    contactError.style.display = 'block';
+    isValid = false;
+  }
+  if (!UPI_ID_REGEX.test(paymentUpiIdInput.value.trim())) {
+    paymentUpiIdInput.classList.add('input-error');
+    paymentUpiIdError.style.display = 'block';
+    isValid = false;
+  }
+  if (!paymentUpiNameInput.value.trim()) {
+    paymentUpiNameInput.classList.add('input-error');
+    paymentUpiNameError.style.display = 'block';
+    isValid = false;
+  }
+
+  if (!isValid) return;
+
+  successMsg.style.display = 'none';
+  errorMsg.style.display = 'none';
+
+  submitBtn.disabled = true;
+  btnSpinner.style.display = 'inline-block';
+  btnText.textContent = "SUBMITTING...";
+
+  const formData = {
+    teamName: teamNameInput.value.trim(),
+    ign: ignInput.value.trim(),
+    characterId: characterIdInput.value.trim(),
+    email: emailInput.value.trim(),
+    contact: contactInput.value.trim(),
+    paymentUpiId: paymentUpiIdInput.value.trim(),
+    paymentUpiName: paymentUpiNameInput.value.trim()
+  };
+
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData)
+    });
+
+    btnSpinner.style.display = 'none';
+    submitBtn.disabled = false;
+    btnText.textContent = "SUBMIT REGISTRATION";
+    successMsg.style.display = 'block';
+    form.reset();
+
+    setTimeout(fetchLiveSlots, 1500);
+
+  } catch (err) {
+    console.error("Submission Error:", err);
+    submitBtn.disabled = false;
+    btnSpinner.style.display = 'none';
+    btnText.textContent = "SUBMIT REGISTRATION";
+    errorMsg.style.display = 'block';
+  }
+});
+
+(function(){
+  var c = document.getElementById('bg-canvas');
+  if(!c) return;
+  var x = c.getContext('2d'), W, H, P = [];
+  function rs(){
+    W = c.width = window.innerWidth;
+    H = c.height = window.innerHeight;
+  }
+  rs();
+  window.addEventListener('resize', rs);
+  for(var i=0; i<35; i++){
+    P.push({
+      x: Math.random(),
+      y: Math.random(),
+      r: Math.random() * 2 + 0.6,
+      s: Math.random() * 0.0006 + 0.0002,
+      d: Math.random() * 6
+    });
+  }
+  function f(t){
+    x.clearRect(0,0,W,H);
+    for(var i=0; i<P.length; i++){
+      var p = P[i];
+      p.y -= p.s;
+      if(p.y < 0){ p.y = 1; p.x = Math.random(); }
+      var px = (p.x + Math.sin(t/1500 + p.d) * 0.02) * W;
+      x.beginPath();
+      x.arc(px, p.y * H, p.r, 0, Math.PI * 2);
+      x.fillStyle = 'rgba(255,' + (150 + p.r * 30 | 0) + ',60,' + (0.3 + Math.sin(t/400 + p.d) * 0.2) + ')';
+      x.fill();
+    }
+    requestAnimationFrame(f);
+  }
+  requestAnimationFrame(f);
+})();
+</script>
+</body>
+</html>
