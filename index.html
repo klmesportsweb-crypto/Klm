@@ -543,8 +543,11 @@ function buildCard(t, past) {
     }
   } else {
     const view = el('a', 'btn-outline', 'View Details');
-    view.href = t.slotListUrl || t.detailsUrl || '#';
+    // ഗൂഗിൾ ഷീറ്റിൽ നൽകിയിട്ടുള്ള Details HTML ഫയലിലേക്ക് ലിങ്ക് ചെയ്യുന്നു
+    view.href = t.detailsUrl || t.slotListUrl || '#';
+    
     const reg = el('a', 'btn', 'Book Your Slot');
+    // ഗൂഗിൾ ഷീറ്റിൽ നൽകിയിട്ടുള്ള Book Your Slot / Registration HTML ഫയലിലേക്ക് ലിങ്ക് ചെയ്യുന്നു
     reg.href = t.registerUrl || '#';
     reg.rel = 'noopener';
     reg.append(el('small', '', t.entry || 'Tournament Entry'));
@@ -621,9 +624,11 @@ function parseCSV(text) {
       time: obj.time || obj.matchtime || "",
       image: obj.image || obj.thumbnail || obj.imageurl || "1000193608.webp",
       mapBadge: obj.mapbadge || obj.map || obj.badge || "",
-      detailsUrl: obj.detailsurl || obj.details || "#",
-      slotListUrl: obj.slotlisturl || obj.slotlist || obj.slots || "slot-list 1.html",
-      registerUrl: obj.registerurl || obj.register || obj.registration || "registration 1.html",
+      // View Details ക്ലിക്ക് ചെയ്യുമ്പോൾ പോകേണ്ട HTML ഫയൽ (ഗൂഗിൾ ഷീറ്റിലെ Details / View Details / Details URL കോളം)
+      detailsUrl: obj.detailsurl || obj.details || obj.detailshtml || obj.viewdetails || obj.slotlisturl || obj.slotlist || "",
+      slotListUrl: obj.slotlisturl || obj.slotlist || obj.slots || "",
+      // Book Your Slot ക്ലിക്ക് ചെയ്യുമ്പോൾ പോകേണ്ട HTML ഫയൽ (ഗൂഗിൾ ഷീറ്റിലെ Register / Book Slot / Registration കോളം)
+      registerUrl: obj.registerurl || obj.register || obj.registration || obj.bookslot || obj.bookyourslot || obj.registerhtml || "",
       resultUrl: obj.resulturl || obj.result || ""
     };
 
