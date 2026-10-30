@@ -26,7 +26,7 @@ header .wrap{max-width:1100px;display:flex;justify-content:space-between;align-i
 .brand{display:flex;align-items:center;gap:8px;font-weight:900;font-size:1.2rem;letter-spacing:.04em;text-decoration:none}
 .brand span{background:linear-gradient(90deg,var(--gold),var(--gold2));color:#111;padding:2px 8px;font-size:.8rem;letter-spacing:.12em;border-radius:3px}
 
-/* Hamburger Menu Icon (Mobile & Desktop) */
+/* Hamburger Menu Icon */
 .menu-btn{
   background:transparent;
   border:none;
@@ -57,7 +57,7 @@ header .wrap{max-width:1100px;display:flex;justify-content:space-between;align-i
   transform:translateY(-8.25px) rotate(-45deg);
 }
 
-/* Nav Dropdown / Drawer (Mobile & Desktop) */
+/* Nav Dropdown */
 nav{
   position:absolute;
   top:68px;
@@ -189,6 +189,8 @@ a.btn-outline{display:block;text-align:center;text-decoration:none}
 .empty strong{display:block;font-size:1.15rem;margin-bottom:6px}
 .empty p{color:var(--muted)}
 
+.loading-state{padding:24px;text-align:center;color:var(--gold2);font-weight:600}
+
 #contact p{color:var(--muted);max-width:48ch;font-size:1.05rem}
 #contact .btn{display:inline-block;margin-top:20px}
 
@@ -202,7 +204,7 @@ footer{background:#080604;border-top:1px solid var(--line);padding:40px 0 28px}
 .f-social svg{width:26px;height:26px;display:block}
 .copy{margin-top:24px;color:#6b6255;font-size:.85rem}
 
-/* 16:9 Landscape Result Photo Popup Modal (Centered on Mobile & Desktop) */
+/* 16:9 Landscape Result Photo Popup Modal */
 dialog#image-modal{
   border:1px solid var(--line);
   border-radius:16px;
@@ -313,7 +315,6 @@ dialog#image-modal::backdrop{
   <div class="wrap">
     <a class="brand" href="#top">KLM <span>ESPORTS</span></a>
     
-    <!-- Hamburger button for all screen sizes -->
     <button class="menu-btn" id="menu-btn" aria-label="Toggle Menu" type="button">
       <span></span>
       <span></span>
@@ -350,8 +351,9 @@ dialog#image-modal::backdrop{
   <section id="tournaments">
     <div class="wrap">
       <h2>Upcoming Tournaments</h2>
+      <div id="loading-state" class="loading-state">Syncing live tournament updates...</div>
       <ul id="tournament-list" class="t-list"></ul>
-      <div class="empty" id="empty-state">
+      <div class="empty" id="empty-state" hidden>
         <strong>No tournaments scheduled right now</strong>
         <p>New tournaments will be listed here. Follow us on Instagram to hear first.</p>
       </div>
@@ -363,7 +365,7 @@ dialog#image-modal::backdrop{
     <div class="wrap">
       <h2>Tournament History</h2>
       <ul id="history-list" class="t-list"></ul>
-      <div class="empty" id="history-empty">
+      <div class="empty" id="history-empty" hidden>
         <strong>No past tournaments yet</strong>
         <p>Finished tournaments move here automatically after their date.</p>
       </div>
@@ -398,7 +400,7 @@ dialog#image-modal::backdrop{
   </div>
 </footer>
 
-<!-- Result Photo Popup Modal (16:9 Landscape Aspect Ratio) -->
+<!-- Result Photo Popup Modal -->
 <dialog id="image-modal" aria-label="Tournament Result">
   <div class="m-bar">
     <span id="modal-title">Tournament Result</span>
@@ -410,7 +412,7 @@ dialog#image-modal::backdrop{
 </dialog>
 
 <script>
-// Toggle Hamburger Menu
+// Hamburger Navigation
 const menuBtn = document.getElementById('menu-btn');
 const navLinks = document.getElementById('nav-links');
 
@@ -434,7 +436,14 @@ document.addEventListener('click', (e) => {
   }
 });
 
-const tournaments = [
+// Google Sheets Live Data Sources
+const SHEET_URLS = [
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrda-JJwn0wFFlqs83iQXjVg1TXeNxdtEOrNW52jXJOahIelYlwIa2kyVkS6-EuZbu2D3FvIlxUwHZ/pub?gid=972107976&single=true&output=csv",
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrda-JJwn0wFFlqs83iQXjVg1TXeNxdtEOrNW52jXJOahIelYlwIa2kyVkS6-EuZbu2D3FvIlxUwHZ/pub?gid=582137958&single=true&output=csv"
+];
+
+// Fallback data in case of offline/network issues
+const fallbackTournaments = [
   {
     game: "BGMI",
     title: "Friendly Match",
@@ -450,10 +459,13 @@ const tournaments = [
   }
 ];
 
+let allTournaments = [];
+
 const list = document.getElementById('tournament-list');
 const histList = document.getElementById('history-list');
 const empty = document.getElementById('empty-state');
 const histEmpty = document.getElementById('history-empty');
+const loadingState = document.getElementById('loading-state');
 const imgModal = document.getElementById('image-modal');
 const modalImg = document.getElementById('modal-img');
 const modalTitle = document.getElementById('modal-title');
@@ -482,10 +494,14 @@ document.getElementById('m-close').addEventListener('click', closePopup);
 
 const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
 function endOfDay(t) {
+  if (!t.date) return null;
   const m = /^(\d{1,2})\s+([A-Za-z]{3})[A-Za-z]*\s+(\d{4})$/.exec(String(t.date).trim());
-  if (!m) return null;
-  const mon = MONTHS.indexOf(m[2].toUpperCase());
-  return mon < 0 ? null : new Date(+m[3], mon, +m[1] + 1);
+  if (m) {
+    const mon = MONTHS.indexOf(m[2].toUpperCase());
+    if (mon >= 0) return new Date(+m[3], mon, +m[1] + 1);
+  }
+  const parsed = Date.parse(t.date);
+  return isNaN(parsed) ? null : new Date(parsed + 86400000);
 }
 function endTime(t) { const e = endOfDay(t); return e ? e.getTime() : Infinity; }
 function isPast(t) { return endTime(t) <= Date.now(); }
@@ -496,13 +512,16 @@ function buildCard(t, past) {
 
   const thumbWrap = el('div', 't-thumb-wrap');
   const img = el('img', 't-thumb');
-  img.src = t.image;
-  img.alt = t.game + ' ' + t.title;
+  img.src = t.image || 'logo.jpg';
+  img.alt = (t.game || '') + ' ' + (t.title || '');
   thumbWrap.append(img);
   if (t.mapBadge) thumbWrap.append(el('span', 't-badge', t.mapBadge));
 
   const dates = el('div', 't-dates');
-  dates.append(el('small', '', past ? 'Held on' : 'Date and time'), el('span', '', t.date + ' · ' + t.time));
+  dates.append(
+    el('small', '', past ? 'Held on' : 'Date and time'), 
+    el('span', '', (t.date || '') + (t.time ? ' · ' + t.time : ''))
+  );
 
   const actions = el('div', 't-actions');
   if (past) {
@@ -510,7 +529,7 @@ function buildCard(t, past) {
       const res = el('button', 'btn-outline', 'View Result');
       res.type = 'button';
       res.addEventListener('click', () => {
-        showResultPopup(t.resultUrl, t.game + ' ' + t.title);
+        showResultPopup(t.resultUrl, (t.game || '') + ' ' + (t.title || ''));
       });
       actions.append(res);
     } else {
@@ -524,25 +543,27 @@ function buildCard(t, past) {
     }
   } else {
     const view = el('a', 'btn-outline', 'View Details');
-    view.href = t.slotListUrl;
+    view.href = t.slotListUrl || t.detailsUrl || '#';
     const reg = el('a', 'btn', 'Book Your Slot');
-    reg.href = t.registerUrl;
+    reg.href = t.registerUrl || '#';
     reg.rel = 'noopener';
-    reg.append(el('small', '', 'Free Tournament Entry'));
+    reg.append(el('small', '', t.entry || 'Tournament Entry'));
     actions.append(view, reg);
   }
 
-  card.append(thumbWrap, el('div', 't-name', t.game + ' ' + t.title), el('div', 't-tag', t.entry), dates, actions);
+  card.append(thumbWrap, el('div', 't-name', (t.game ? t.game + ' ' : '') + (t.title || '')), el('div', 't-tag', t.entry || ''), dates, actions);
   li.append(card);
   return li;
 }
 
 let timer;
 function render() {
-  const upcoming = tournaments.filter(t => !isPast(t)).sort((a, b) => endTime(a) - endTime(b));
-  const past = tournaments.filter(isPast).sort((a, b) => endTime(b) - endTime(a));
+  const upcoming = allTournaments.filter(t => !isPast(t)).sort((a, b) => endTime(a) - endTime(b));
+  const past = allTournaments.filter(isPast).sort((a, b) => endTime(b) - endTime(a));
+  
   list.replaceChildren(...upcoming.map(t => buildCard(t, false)));
   histList.replaceChildren(...past.map(t => buildCard(t, true)));
+  
   empty.hidden = upcoming.length > 0;
   histEmpty.hidden = past.length > 0;
 
@@ -551,8 +572,107 @@ function render() {
     timer = setTimeout(render, Math.min(endTime(upcoming[0]) - Date.now() + 1000, 2147483647));
   }
 }
-render();
-document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
+
+// CSV Parser handling quotes and commas
+function parseCSV(text) {
+  const lines = text.trim().split(/\r\n|\n/);
+  if (lines.length < 2) return [];
+
+  function splitLine(line) {
+    const res = [];
+    let cur = '', inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') {
+        if (inQuotes && line[i + 1] === '"') {
+          cur += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (c === ',' && !inQuotes) {
+        res.push(cur.trim());
+        cur = '';
+      } else {
+        cur += c;
+      }
+    }
+    res.push(cur.trim());
+    return res;
+  }
+
+  const rawHeaders = splitLine(lines[0]);
+  const headers = rawHeaders.map(h => h.toLowerCase().replace(/[^a-z0-9]/g, ''));
+  const rows = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
+    const values = splitLine(lines[i]);
+    const obj = {};
+    headers.forEach((h, idx) => {
+      obj[h] = values[idx] || '';
+    });
+
+    const tournament = {
+      game: obj.game || obj.gamename || "BGMI",
+      title: obj.title || obj.tournament || obj.name || "Match",
+      entry: obj.entry || obj.entryfee || "FREE ENTRY",
+      date: obj.date || obj.matchdate || "",
+      time: obj.time || obj.matchtime || "",
+      image: obj.image || obj.thumbnail || obj.imageurl || "1000193608.webp",
+      mapBadge: obj.mapbadge || obj.map || obj.badge || "",
+      detailsUrl: obj.detailsurl || obj.details || "#",
+      slotListUrl: obj.slotlisturl || obj.slotlist || obj.slots || "slot-list 1.html",
+      registerUrl: obj.registerurl || obj.register || obj.registration || "registration 1.html",
+      resultUrl: obj.resulturl || obj.result || ""
+    };
+
+    if (tournament.date || tournament.title) {
+      rows.push(tournament);
+    }
+  }
+  return rows;
+}
+
+// Fetch both sheets simultaneously
+async function fetchTournaments() {
+  try {
+    const fetchPromises = SHEET_URLS.map(url =>
+      fetch(url)
+        .then(res => {
+          if (!res.ok) throw new Error('Sheet load error');
+          return res.text();
+        })
+        .then(csvText => parseCSV(csvText))
+        .catch(err => {
+          console.warn("Failed fetching sheet:", url, err);
+          return [];
+        })
+    );
+
+    const results = await Promise.all(fetchPromises);
+    const combined = results.flat();
+
+    if (combined.length > 0) {
+      allTournaments = combined;
+    } else {
+      allTournaments = fallbackTournaments;
+    }
+  } catch (err) {
+    console.error("Live fetch failed, using fallback:", err);
+    allTournaments = fallbackTournaments;
+  } finally {
+    if (loadingState) loadingState.style.display = 'none';
+    render();
+  }
+}
+
+fetchTournaments();
+
+// Re-sync data when window becomes visible
+document.addEventListener('visibilitychange', () => { 
+  if (!document.hidden) fetchTournaments(); 
+});
 
 const stage = document.getElementById('logo-stage');
 const intro = document.getElementById('intro');
