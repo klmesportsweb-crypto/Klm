@@ -960,14 +960,28 @@ function buildCard(t, past) {
       actions.append(res, note);
     }
   } else {
-    const view = el('a', 'btn-outline', 'View Details');
-    view.href = t.detailsUrl || t.slotListUrl || '#';
-    
-    const reg = el('a', 'btn', 'Book Your Slot');
-    reg.href = t.registerUrl || '#';
-    reg.rel = 'noopener';
-    reg.append(el('small', '', t.entry || 'Tournament Entry'));
-    actions.append(view, reg);
+    const hasDetails = Boolean(t.detailsUrl || t.slotListUrl);
+    const hasRegister = Boolean(t.registerUrl);
+
+    if (!hasDetails && !hasRegister) {
+      const statusNote = el('p', 't-result', 'Registration Not Started');
+      statusNote.style.borderColor = 'var(--gold)';
+      statusNote.style.color = 'var(--gold2)';
+      actions.append(statusNote);
+    } else {
+      if (hasDetails) {
+        const view = el('a', 'btn-outline', 'View Details');
+        view.href = t.detailsUrl || t.slotListUrl;
+        actions.append(view);
+      }
+      if (hasRegister) {
+        const reg = el('a', 'btn', 'Book Your Slot');
+        reg.href = t.registerUrl;
+        reg.rel = 'noopener';
+        reg.append(el('small', '', t.entry || 'Tournament Entry'));
+        actions.append(reg);
+      }
+    }
   }
 
   card.append(thumbWrap, el('div', 't-name', (t.game ? t.game + ' ' : '') + (t.title || '')), el('div', 't-tag', t.entry || ''), dates, actions);
