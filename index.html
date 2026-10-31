@@ -126,26 +126,30 @@ nav a:hover{color:var(--gold2)}
   border-radius: 14px;
   overflow: hidden;
   width: 100%;
-  aspect-ratio: 9/13;
+  min-height: 440px;
   background: #17120c;
   border: 1px solid var(--line);
   box-shadow: 0 10px 35px rgba(0,0,0,0.7);
 }
 .slide-img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
   display: block;
+  z-index: 1;
 }
 .slide-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(12,9,6,0.96) 15%, rgba(12,9,6,0.45) 55%, transparent 100%);
+  background: linear-gradient(to top, rgba(12,9,6,0.95) 0%, rgba(12,9,6,0.45) 45%, transparent 100%);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   padding: 24px 20px;
+  z-index: 2;
 }
 .slide-title {
   color: var(--gold2);
@@ -459,6 +463,7 @@ dialog#image-modal::backdrop{
   .banner-carousel-section { padding: 32px 0 44px; }
   .slide-card {
     aspect-ratio: 16/9;
+    min-height: auto;
   }
   .slide-card.brand-hero-card {
     padding: 40px 60px;
@@ -776,7 +781,7 @@ if (intro) {
   }
 }
 
-// Floating Sparkles / Particles Canvas Effect (പഴയ HTML-ൽ ഉണ്ടായിരുന്ന എഫക്റ്റ്)
+// Floating Sparkles / Particles Canvas Effect
 (function(){
   var c = document.getElementById('hero-canvas');
   if(!c) return;
