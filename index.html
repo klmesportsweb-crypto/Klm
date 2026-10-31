@@ -91,42 +91,211 @@ nav a:last-child{
 }
 nav a:hover{color:var(--gold2)}
 
-/* Hero Section */
-.hero{position:relative;padding:48px 0 64px;background:radial-gradient(ellipse at 50% 20%,#3a2410 0%,#150e08 55%,#0c0906 85%);overflow:hidden;border-bottom:1px solid var(--line)}
-#hero-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
-.hero .wrap{position:relative;z-index:2}
-
-.hero-content{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  gap:24px;
+/* Single Large Banner Carousel Section */
+.banner-carousel-section {
+  width: 100%;
+  overflow: hidden;
+  padding: 20px 0 32px;
+  background: radial-gradient(circle at 50% 20%, #29180b 0%, #0c0906 80%);
+  position: relative;
+  border-bottom: 1px solid var(--line);
+}
+.carousel-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  position: relative;
+  padding: 0 16px;
+}
+.carousel-viewport {
+  overflow: hidden;
+  width: 100%;
+  border-radius: 16px;
+}
+.carousel-track {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+.carousel-slide {
+  flex: 0 0 100%;
+  width: 100%;
+  max-width: 100%;
+}
+.slide-card {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 9/13;
+  background: #17120c;
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 35px rgba(0,0,0,0.7);
+}
+.slide-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+.slide-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(12,9,6,0.96) 15%, rgba(12,9,6,0.45) 55%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px 20px;
+}
+.slide-title {
+  color: var(--gold2);
+  font-size: 1.45rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+}
+.slide-desc {
+  color: #dfd5c6;
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+  line-height: 1.4;
+  max-width: 60ch;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+.btn-slide {
+  align-self: flex-start;
+  background: rgba(22, 17, 12, 0.9);
+  border: 1px solid var(--gold);
+  color: var(--gold2);
+  padding: 9px 20px;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: 0.2s;
+}
+.btn-slide:hover {
+  background: var(--gold);
+  color: #111;
 }
 
-.logo-stage{
-  position:relative;
-  width:min(100%, 320px);
-  aspect-ratio:1;
-  border-radius:20px;
-  overflow:hidden;
-  background:#0c0a07;
-  border:2px solid rgba(224,160,48,0.4);
-  box-shadow:0 0 35px rgba(224,160,48,0.3);
-  animation:floatLogo 5s ease-in-out infinite;
+/* Original Screenshot Layout for First Slide */
+.slide-card.brand-hero-card {
+  background: radial-gradient(ellipse at 50% 20%, #3a2410 0%, #150e08 55%, #0c0906 85%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 30px 24px;
 }
-@keyframes floatLogo{50%{transform:translateY(-8px);box-shadow:0 0 45px rgba(224,160,48,0.45);}}
-.logo-stage img,.logo-stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-.logo-stage video{opacity:0;transition:opacity .5s}
-.logo-stage.playing video{opacity:1}
+#hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+.hero-stage-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 22px;
+  z-index: 2;
+  position: relative;
+  width: 100%;
+}
+.logo-stage {
+  position: relative;
+  width: min(82vw, 290px);
+  aspect-ratio: 1;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #0c0a07;
+  border: 2px solid rgba(224,160,48,0.4);
+  box-shadow: 0 0 35px rgba(224,160,48,0.3);
+  animation: floatLogo 5s ease-in-out infinite;
+}
+@keyframes floatLogo {
+  50% { transform: translateY(-8px); box-shadow: 0 0 45px rgba(224,160,48,0.45); }
+}
+.logo-stage img, .logo-stage video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.logo-stage video {
+  opacity: 0;
+  transition: opacity .5s;
+}
+.logo-stage.playing video {
+  opacity: 1;
+}
+.hero-stage-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.hero-stage-text h1 {
+  color: var(--gold2);
+  font-weight: 800;
+  font-size: clamp(2.1rem, 6vw, 3.4rem);
+  line-height: 1.1;
+  letter-spacing: -.01em;
+  text-shadow: 0 0 24px rgba(224,160,48,0.25);
+}
+.hero-stage-text p {
+  margin-top: 10px;
+  color: #dfd5c6;
+  font-size: 1rem;
+  max-width: 48ch;
+  line-height: 1.45;
+}
+.hero-stage-text .btn-ghost {
+  display: inline-block;
+  margin-top: 18px;
+  background: var(--panel2);
+  border: 1px solid var(--gold);
+  color: var(--gold2);
+  padding: 10px 22px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: .2s;
+}
+.hero-stage-text .btn-ghost:hover {
+  background: var(--gold);
+  color: #111;
+}
 
-.hero-text{display:flex;flex-direction:column;align-items:flex-start}
-.hero h1{margin-top:4px;color:var(--gold2);font-weight:800;font-size:clamp(2.4rem,6vw,3.8rem);line-height:1.08;letter-spacing:-.01em;text-shadow:0 0 24px rgba(224,160,48,0.25)}
-.hero p{margin-top:14px;max-width:48ch;color:#dfd5c6;font-size:1.05rem}
-.btn-ghost{display:inline-block;margin-top:22px;background:var(--panel2);border:1px solid var(--gold);color:var(--gold2);padding:11px 22px;border-radius:6px;text-decoration:none;font-weight:700;transition:.2s}
-.btn-ghost:hover{background:var(--gold);color:#111}
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.carousel-dot.active {
+  background: var(--gold2);
+  width: 24px;
+  border-radius: 4px;
+}
 
 /* Sections */
-section{padding:64px 0}
+section{padding:54px 0}
 h2{color:var(--gold2);font-size:1.1rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px}
 
 /* Tournament Cards List */
@@ -204,7 +373,7 @@ footer{background:#080604;border-top:1px solid var(--line);padding:40px 0 28px}
 .f-social svg{width:26px;height:26px;display:block}
 .copy{margin-top:24px;color:#6b6255;font-size:.85rem}
 
-/* 16:9 Landscape Result Photo Popup Modal */
+/* Result Photo Popup Modal */
 dialog#image-modal{
   border:1px solid var(--line);
   border-radius:16px;
@@ -285,14 +454,40 @@ dialog#image-modal::backdrop{
   display:block;
 }
 
+/* Desktop Breakpoints */
 @media (min-width: 768px) {
-  .hero{padding: 72px 0 84px;}
-  .hero-content{flex-direction: row-reverse;align-items: center;justify-content: space-between;gap: 48px;}
-  .logo-stage{width: 360px;flex-shrink: 0;}
-  .hero-text{flex: 1;}
-  .hero h1{font-size: 3.8rem;}
-  .hero p{font-size: 1.15rem;margin-top: 18px;}
-  .btn-ghost{margin-top: 28px;font-size: 1rem;padding: 12px 24px;}
+  .banner-carousel-section { padding: 32px 0 44px; }
+  .slide-card {
+    aspect-ratio: 16/9;
+  }
+  .slide-card.brand-hero-card {
+    padding: 40px 60px;
+  }
+  .hero-stage-content {
+    flex-direction: row-reverse;
+    justify-content: space-around;
+    align-items: center;
+    gap: 48px;
+  }
+  .logo-stage {
+    width: 290px;
+    flex-shrink: 0;
+  }
+  .hero-stage-text {
+    flex: 1;
+  }
+  .hero-stage-text p {
+    font-size: 1.15rem;
+  }
+  .slide-overlay {
+    padding: 36px 32px;
+  }
+  .slide-title {
+    font-size: 2rem;
+  }
+  .slide-desc {
+    font-size: 1.05rem;
+  }
   .t-list{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -300,12 +495,6 @@ dialog#image-modal::backdrop{
     overflow-x: visible;
   }
   .t-list li{flex: none;}
-}
-
-@media (min-width: 1024px) {
-  .hero-content{gap: 64px;}
-  .logo-stage{width: 390px;}
-  .hero h1{font-size: 4.2rem;}
 }
 </style>
 </head>
@@ -330,22 +519,99 @@ dialog#image-modal::backdrop{
 </header>
 
 <main id="top">
-  <div class="hero">
-    <canvas id="hero-canvas"></canvas>
-    <div class="wrap">
-      <div class="hero-content">
-        <div class="logo-stage" id="logo-stage">
-          <img src="logo.jpg" alt="KLM Esports logo">
-          <video id="intro" src="intro.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
-        </div>
-        <div class="hero-text">
-          <h1>KLM Esports</h1>
-          <p>Tournaments for Kerala’s gamers. Check back here for upcoming events.</p>
-          <a class="btn-ghost" href="#tournaments">Tournament details</a>
+  <!-- Single Large Banner Carousel Section -->
+  <section class="banner-carousel-section">
+    <div class="carousel-container">
+      <div class="carousel-viewport" id="carouselViewport">
+        <div class="carousel-track" id="carouselTrack">
+          
+          <!-- Slide 1: Main Brand Hero with Floating Particle Dots & Logo Stage -->
+          <div class="carousel-slide">
+            <div class="slide-card brand-hero-card">
+              <!-- Animated Floating Particle Dots Canvas -->
+              <canvas id="hero-canvas"></canvas>
+              
+              <div class="hero-stage-content">
+                <div class="logo-stage" id="logo-stage">
+                  <img src="logo.jpg" alt="KLM Esports logo">
+                  <video id="intro" src="intro.mp4" muted playsinline preload="auto" aria-hidden="true"></video>
+                </div>
+                <div class="hero-stage-text">
+                  <h1>KLM Esports</h1>
+                  <p>Tournaments for Kerala’s gamers. Check back here for upcoming events.</p>
+                  <a class="btn-ghost" href="#tournaments">Tournament details</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2: Diwali Special -->
+          <div class="carousel-slide">
+            <div class="slide-card">
+              <img src="slide1.jpg" alt="KLM Diwali Specials" class="slide-img">
+              <div class="slide-overlay">
+                <h3 class="slide-title">KLM DIWALI SPECIALS</h3>
+                <p class="slide-desc">ഈ ദീപാവലിക്ക് യുദ്ധക്കളത്തിൽ വെടിക്കെട്ട് ഫൈറ്റുകൾ! മികച്ച സ്ക്വാഡുകൾ ഏറ്റുമുട്ടുന്ന ഗ്രാൻഡ് ഫെസ്റ്റിവൽ മാച്ചുകൾ.</p>
+                <a href="#tournaments" class="btn-slide">Tournament details</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Saturday Special -->
+          <div class="carousel-slide">
+            <div class="slide-card">
+              <img src="slide2.jpg" alt="KLM Saturday Showdown" class="slide-img">
+              <div class="slide-overlay">
+                <h3 class="slide-title">KLM SATURDAY SHOWDOWN</h3>
+                <p class="slide-desc">എല്ലാ ശനിയാഴ്ചയും കട്ടക്കലിപ്പ് പോരാട്ടം! നിങ്ങളുടെ ടീമിനൊപ്പം സ്ലോട്ട് ബുക്ക് ചെയ്ത് വിജയികളാകൂ.</p>
+                <a href="#tournaments" class="btn-slide">Tournament details</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4: Sunday Special -->
+          <div class="carousel-slide">
+            <div class="slide-card">
+              <img src="slide3.jpg" alt="KLM Sunday Warzone" class="slide-img">
+              <div class="slide-overlay">
+                <h3 class="slide-title">KLM SUNDAY WARZONE</h3>
+                <p class="slide-desc">ഞായറാഴ്ച രാത്രികളിലെ വാശിയേറിയ എറാങ്കൽ ഫൈറ്റുകൾ. അവസാന സോൺ ആധിപത്യം ആർക്ക് സ്വന്തം?</p>
+                <a href="#tournaments" class="btn-slide">Tournament details</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 5: Christmas Special -->
+          <div class="carousel-slide">
+            <div class="slide-card">
+              <img src="slide4.jpg" alt="KLM Christmas Clash" class="slide-img">
+              <div class="slide-overlay">
+                <h3 class="slide-title">KLM CHRISTMAS CLASH 2026</h3>
+                <p class="slide-desc">വിന്റർ സീസണിലെ ഏറ്റവും വലിയ പോരാട്ടം. വമ്പൻ പ്രൈസ്‌പൂളും തീപാറും മാച്ചുകളും ഉടൻ വരുന്നു!</p>
+                <a href="#tournaments" class="btn-slide">Tournament details</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 6: New Year Special -->
+          <div class="carousel-slide">
+            <div class="slide-card">
+              <img src="slide5.jpg" alt="KLM New Year Bash" class="slide-img">
+              <div class="slide-overlay">
+                <h3 class="slide-title">KLM NEW YEAR BASH 2027</h3>
+                <p class="slide-desc">പുതുവർഷത്തിലേക്ക് കിടിലൻ തുടക്കം! കേരളത്തിലെ ബെസ്റ്റ് ലൈനപ്പുകൾ നേർക്കുനേർ കൊമ്പുകോർക്കുന്നു.</p>
+                <a href="#tournaments" class="btn-slide">Tournament details</a>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
+
+      <!-- Pagination Dots -->
+      <div class="carousel-dots" id="carouselDots"></div>
     </div>
-  </div>
+  </section>
 
   <!-- Upcoming Tournaments Section -->
   <section id="tournaments">
@@ -412,7 +678,7 @@ dialog#image-modal::backdrop{
 </dialog>
 
 <script>
-// Hamburger Navigation
+// Mobile Navigation
 const menuBtn = document.getElementById('menu-btn');
 const navLinks = document.getElementById('nav-links');
 
@@ -436,13 +702,125 @@ document.addEventListener('click', (e) => {
   }
 });
 
+// Single Banner Full Slider Logic
+const track = document.getElementById('carouselTrack');
+const dotsContainer = document.getElementById('carouselDots');
+const slides = document.querySelectorAll('.carousel-slide');
+let currentIndex = 0;
+let autoPlayTimer;
+
+slides.forEach((_, i) => {
+  const dot = document.createElement('div');
+  dot.className = `carousel-dot ${i === 0 ? 'active' : ''}`;
+  dot.addEventListener('click', () => moveToSlide(i));
+  dotsContainer.appendChild(dot);
+});
+
+function updateDots() {
+  const dots = document.querySelectorAll('.carousel-dot');
+  dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex));
+}
+
+function moveToSlide(index) {
+  const maxIndex = slides.length - 1;
+  currentIndex = index > maxIndex ? 0 : index < 0 ? maxIndex : index;
+  track.style.transform = `translateX(-${currentIndex * 100}%)`;
+  updateDots();
+}
+
+function startAutoSlide() {
+  stopAutoSlide();
+  autoPlayTimer = setInterval(() => {
+    moveToSlide(currentIndex + 1);
+  }, 4200);
+}
+
+function stopAutoSlide() {
+  clearInterval(autoPlayTimer);
+}
+
+track.addEventListener('mouseenter', stopAutoSlide);
+track.addEventListener('mouseleave', startAutoSlide);
+
+// Touch Swipe Support for Mobile
+let startX = 0;
+track.addEventListener('touchstart', (e) => {
+  stopAutoSlide();
+  startX = e.touches[0].clientX;
+}, { passive: true });
+
+track.addEventListener('touchend', (e) => {
+  const endX = e.changedTouches[0].clientX;
+  const diff = startX - endX;
+  if (Math.abs(diff) > 40) {
+    if (diff > 0) moveToSlide(currentIndex + 1);
+    else moveToSlide(currentIndex - 1);
+  }
+  startAutoSlide();
+});
+
+startAutoSlide();
+
+// Stage Logo Video Integration
+const stage = document.getElementById('logo-stage');
+const intro = document.getElementById('intro');
+if (intro) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    intro.remove();
+  } else {
+    intro.addEventListener('playing', () => stage.classList.add('playing'));
+    intro.addEventListener('ended', () => stage.classList.remove('playing'));
+    intro.addEventListener('error', () => stage.classList.remove('playing'));
+    const tryPlay = intro.play();
+    if (tryPlay) tryPlay.catch(() => stage.classList.remove('playing'));
+  }
+}
+
+// Floating Sparkles / Particles Canvas Effect (പഴയ HTML-ൽ ഉണ്ടായിരുന്ന എഫക്റ്റ്)
+(function(){
+  var c = document.getElementById('hero-canvas');
+  if(!c) return;
+  var x = c.getContext('2d'), W, H, P = [];
+  function rs(){
+    W = c.width = c.parentElement.offsetWidth;
+    H = c.height = c.parentElement.offsetHeight;
+  }
+  rs();
+  window.addEventListener('resize', rs);
+  for(var i=0; i<38; i++){
+    P.push({
+      x: Math.random(),
+      y: Math.random(),
+      r: Math.random() * 2 + 0.6,
+      s: Math.random() * 0.0006 + 0.0002,
+      d: Math.random() * 6
+    });
+  }
+  function f(t){
+    x.clearRect(0,0,W,H);
+    for(var i=0; i<P.length; i++){
+      var p = P[i];
+      p.y -= p.s;
+      if(p.y < 0){ p.y = 1; p.x = Math.random(); }
+      var px = (p.x + Math.sin(t/1500 + p.d) * 0.02) * W;
+      x.beginPath();
+      x.arc(px, p.y * H, p.r, 0, Math.PI * 2);
+      x.fillStyle = 'rgba(255,' + (150 + p.r * 30 | 0) + ',60,' + (0.3 + Math.sin(t/400 + p.d) * 0.2) + ')';
+      x.fill();
+    }
+    requestAnimationFrame(f);
+  }
+  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    requestAnimationFrame(f);
+  }
+})();
+
 // Google Sheets Live Data Sources
 const SHEET_URLS = [
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrda-JJwn0wFFlqs83iQXjVg1TXeNxdtEOrNW52jXJOahIelYlwIa2kyVkS6-EuZbu2D3FvIlxUwHZ/pub?gid=972107976&single=true&output=csv",
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQrda-JJwn0wFFlqs83iQXjVg1TXeNxdtEOrNW52jXJOahIelYlwIa2kyVkS6-EuZbu2D3FvIlxUwHZ/pub?gid=582137958&single=true&output=csv"
 ];
 
-// Fallback data in case of offline/network issues
 const fallbackTournaments = [
   {
     game: "BGMI",
@@ -543,11 +921,9 @@ function buildCard(t, past) {
     }
   } else {
     const view = el('a', 'btn-outline', 'View Details');
-    // ഗൂഗിൾ ഷീറ്റിൽ നൽകിയിട്ടുള്ള Details HTML ഫയലിലേക്ക് ലിങ്ക് ചെയ്യുന്നു
     view.href = t.detailsUrl || t.slotListUrl || '#';
     
     const reg = el('a', 'btn', 'Book Your Slot');
-    // ഗൂഗിൾ ഷീറ്റിൽ നൽകിയിട്ടുള്ള Book Your Slot / Registration HTML ഫയലിലേക്ക് ലിങ്ക് ചെയ്യുന്നു
     reg.href = t.registerUrl || '#';
     reg.rel = 'noopener';
     reg.append(el('small', '', t.entry || 'Tournament Entry'));
@@ -576,7 +952,6 @@ function render() {
   }
 }
 
-// CSV Parser handling quotes and commas
 function parseCSV(text) {
   const lines = text.trim().split(/\r\n|\n/);
   if (lines.length < 2) return [];
@@ -624,10 +999,8 @@ function parseCSV(text) {
       time: obj.time || obj.matchtime || "",
       image: obj.image || obj.thumbnail || obj.imageurl || "1000193608.webp",
       mapBadge: obj.mapbadge || obj.map || obj.badge || "",
-      // View Details ക്ലിക്ക് ചെയ്യുമ്പോൾ പോകേണ്ട HTML ഫയൽ (ഗൂഗിൾ ഷീറ്റിലെ Details / View Details / Details URL കോളം)
       detailsUrl: obj.detailsurl || obj.details || obj.detailshtml || obj.viewdetails || obj.slotlisturl || obj.slotlist || "",
       slotListUrl: obj.slotlisturl || obj.slotlist || obj.slots || "",
-      // Book Your Slot ക്ലിക്ക് ചെയ്യുമ്പോൾ പോകേണ്ട HTML ഫയൽ (ഗൂഗിൾ ഷീറ്റിലെ Register / Book Slot / Registration കോളം)
       registerUrl: obj.registerurl || obj.register || obj.registration || obj.bookslot || obj.bookyourslot || obj.registerhtml || "",
       resultUrl: obj.resulturl || obj.result || ""
     };
@@ -639,7 +1012,6 @@ function parseCSV(text) {
   return rows;
 }
 
-// Fetch both sheets simultaneously
 async function fetchTournaments() {
   try {
     const fetchPromises = SHEET_URLS.map(url =>
@@ -674,60 +1046,9 @@ async function fetchTournaments() {
 
 fetchTournaments();
 
-// Re-sync data when window becomes visible
 document.addEventListener('visibilitychange', () => { 
   if (!document.hidden) fetchTournaments(); 
 });
-
-const stage = document.getElementById('logo-stage');
-const intro = document.getElementById('intro');
-if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  intro.remove();
-} else {
-  intro.addEventListener('playing', () => stage.classList.add('playing'));
-  intro.addEventListener('ended', () => stage.classList.remove('playing'));
-  intro.addEventListener('error', () => stage.classList.remove('playing'));
-  const tryPlay = intro.play();
-  if (tryPlay) tryPlay.catch(() => stage.classList.remove('playing'));
-}
-
-(function(){
-  var c = document.getElementById('hero-canvas');
-  if(!c) return;
-  var x = c.getContext('2d'), W, H, P = [];
-  function rs(){
-    W = c.width = c.offsetWidth;
-    H = c.height = c.offsetHeight;
-  }
-  rs();
-  window.addEventListener('resize', rs);
-  for(var i=0; i<35; i++){
-    P.push({
-      x: Math.random(),
-      y: Math.random(),
-      r: Math.random() * 2 + 0.6,
-      s: Math.random() * 0.0006 + 0.0002,
-      d: Math.random() * 6
-    });
-  }
-  function f(t){
-    x.clearRect(0,0,W,H);
-    for(var i=0; i<P.length; i++){
-      var p = P[i];
-      p.y -= p.s;
-      if(p.y < 0){ p.y = 1; p.x = Math.random(); }
-      var px = (p.x + Math.sin(t/1500 + p.d) * 0.02) * W;
-      x.beginPath();
-      x.arc(px, p.y * H, p.r, 0, Math.PI * 2);
-      x.fillStyle = 'rgba(255,' + (150 + p.r * 30 | 0) + ',60,' + (0.3 + Math.sin(t/400 + p.d) * 0.2) + ')';
-      x.fill();
-    }
-    requestAnimationFrame(f);
-  }
-  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    requestAnimationFrame(f);
-  }
-})();
 </script>
 </body>
 </html>
