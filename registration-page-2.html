@@ -265,6 +265,23 @@ h1 {
   width: 170px;
   height: 170px;
 }
+.upi-pay-btn {
+  display: inline-block;
+  margin: 10px 0 14px;
+  background: linear-gradient(90deg, var(--gold), var(--gold2));
+  color: #111;
+  padding: 10px 22px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-decoration: none;
+  transition: filter .2s, transform .1s;
+}
+.upi-pay-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
 .upi-info {
   font-size: .95rem;
   color: var(--muted);
@@ -448,6 +465,9 @@ input::placeholder {
       <div class="payment-title">SCAN & PAY ENTRY FEE</div>
       <div class="qr-wrapper">
         <img src="https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=upi%3A%2F%2Fpay%3Fpa%3DBibin2006r%40okicici%26pn%3DBibinraj%20R%26cu%3DINR" alt="UPI QR Code">
+      </div>
+      <div>
+        <a href="upi://pay?pa=Bibin2006r@okicici&pn=Bibinraj%20R&cu=INR" class="upi-pay-btn">PAY VIA UPI APP</a>
       </div>
       <div class="upi-info">
         UPI ID: <strong>Bibin2006r@okicici</strong><br>
